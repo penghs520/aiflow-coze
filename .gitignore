@@ -7,25 +7,25 @@
 .DS_Store
 
 # Backend (Java/Maven)
-src/backend/target/
-src/backend/*.class
-src/backend/logs/
-src/backend/*.log
+backend/target/
+backend/*.class
+backend/logs/
+backend/*.log
 
 # Logs
 logs/
 *.log
 
 # Frontend (Node.js)
-src/admin-frontend/node_modules/
-src/admin-frontend/dist/
-src/admin-frontend/.pnpm-store/
-src/admin-frontend/*.log
+admin-frontend/node_modules/
+admin-frontend/dist/
+admin-frontend/.pnpm-store/
+admin-frontend/*.log
 
 # Android
-src/android/build/
-src/android/.gradle/
-src/android/local.properties
+android/build/
+android/.gradle/
+android/local.properties
 
 # Docker volumes
 mysql_data/

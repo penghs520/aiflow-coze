@@ -79,7 +79,7 @@ pnpm dev
 
 - [管理后台使用说明](ADMIN_README.md)
 - [部署文档](DEPLOYMENT.md)
-- [设计文档](outputs/)
+- [设计文档](docs/)
 
 ## Git提交规范
 
