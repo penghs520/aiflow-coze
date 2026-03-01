@@ -12,6 +12,10 @@ src/backend/*.class
 src/backend/logs/
 src/backend/*.log
 
+# Logs
+logs/
+*.log
+
 # Frontend (Node.js)
 src/admin-frontend/node_modules/
 src/admin-frontend/dist/
