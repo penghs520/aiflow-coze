@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="app_name">AI工作流平台</string>
+    <string name="login">登录</string>
+    <string name="register">注册</string>
+    <string name="forgot_password">忘记密码?</string>
+    <string name="no_account">还没有账号? 立即注册</string>
+    <string name="have_account">已有账号? 返回登录</string>
+    <string name="back_to_login">返回登录</string>
+    <string name="send_reset_link">发送重置链接</string>
+    <string name="home">首页</string>
+    <string name="task_center">任务中心</string>
+    <string name="profile">我的</string>
+    <string name="points_balance">资源点余额</string>
+    <string name="recharge">充值</string>
+    <string name="settings">设置</string>
+    <string name="logout">退出登录</string>
+</resources>
