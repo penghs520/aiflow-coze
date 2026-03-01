@@ -107,6 +107,20 @@ export const deleteRole = (id) => {
   })
 }
 
+export const enableRole = (id) => {
+  return request({
+    url: `/admin/v1/roles/${id}/enable`,
+    method: 'put'
+  })
+}
+
+export const disableRole = (id) => {
+  return request({
+    url: `/admin/v1/roles/${id}/disable`,
+    method: 'put'
+  })
+}
+
 export const getRolePermissions = (id) => {
   return request({
     url: `/admin/v1/roles/${id}/permissions`,
