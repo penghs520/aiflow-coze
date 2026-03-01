@@ -499,7 +499,7 @@ services:
       SPRING_DATASOURCE_URL: jdbc:mysql://mysql:3306/ai_workflow
       SPRING_REDIS_HOST: redis
     ports:
-      - "8080:8080"
+      - "8001:8001"
     volumes:
       - app_logs:/app/logs
   

@@ -201,7 +201,7 @@ cd src/android
 - 任务提交: `/api/v1/tasks`
 - 任务查询: `/api/v1/tasks/{id}`
 
-默认使用 `http://localhost:8080`，可在 `NetworkModule.kt` 中修改。
+默认使用 `http://localhost:8001`，可在 `NetworkModule.kt` 中修改。
 
 ## 界面交互流程
 

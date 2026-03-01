@@ -35,7 +35,7 @@ cd src/backend
 mvn spring-boot:run
 ```
 
-后端运行在 http://localhost:8080
+后端运行在 http://localhost:8001
 
 ### 3. 启动管理前端
 

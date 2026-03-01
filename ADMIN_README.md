@@ -56,7 +56,7 @@ cd src/backend
 mvn spring-boot:run -Dspring-boot.run.profiles=docker
 ```
 
-后端将在 http://localhost:8080 启动
+后端将在 http://localhost:8001 启动
 
 ### 3. 启动前端
 
@@ -101,7 +101,7 @@ mvn clean compile
 mvn spring-boot:run
 ```
 
-后端将在 http://localhost:8080 启动
+后端将在 http://localhost:8001 启动
 
 ## 前端启动
 

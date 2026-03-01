@@ -74,9 +74,9 @@ mvn spring-boot:run
 
 ### 4. 验证
 
-访问 Swagger UI: http://localhost:8080/api/swagger-ui.html
+访问 Swagger UI: http://localhost:8001/api/swagger-ui.html
 
-健康检查: http://localhost:8080/api/actuator/health
+健康检查: http://localhost:8001/api/actuator/health
 
 ## Android部署
 
@@ -85,7 +85,7 @@ mvn spring-boot:run
 编辑 `src/android/app/src/main/java/com/aiflow/workflow/di/NetworkModule.kt`：
 
 ```kotlin
-private const val BASE_URL = "http://your-server-ip:8080/api/"
+private const val BASE_URL = "http://your-server-ip:8001/api/"
 ```
 
 ### 2. 编译安装
@@ -110,17 +110,17 @@ cd src/android
 
 ```bash
 # 发送验证码
-curl -X POST http://localhost:8080/api/auth/send-code \
+curl -X POST http://localhost:8001/api/auth/send-code \
   -H "Content-Type: application/json" \
   -d '{"phone":"13800138000"}'
 
 # 登录
-curl -X POST http://localhost:8080/api/auth/login \
+curl -X POST http://localhost:8001/api/auth/login \
   -H "Content-Type: application/json" \
   -d '{"phone":"13800138000","code":"123456"}'
 
 # 获取工作流列表
-curl -X GET http://localhost:8080/api/workflows \
+curl -X GET http://localhost:8001/api/workflows \
   -H "Authorization: Bearer YOUR_TOKEN"
 ```
 
@@ -140,7 +140,7 @@ curl -X GET http://localhost:8080/api/workflows \
 
 1. 检查MySQL是否启动
 2. 检查Redis是否启动
-3. 检查端口8080是否被占用
+3. 检查端口8001是否被占用
 4. 查看日志: `logs/application.log`
 
 ### Android连接失败
