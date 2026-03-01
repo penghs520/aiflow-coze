@@ -44,7 +44,8 @@ public class SecurityConfig {
                                 "/payment/callback/**",
                                 "/swagger-ui/**",
                                 "/v3/api-docs/**",
-                                "/actuator/**"
+                                "/actuator/**",
+                                "/uploads/**"
                         ).permitAll()
                         .requestMatchers("/admin/v1/**").authenticated()
                         .anyRequest().authenticated()

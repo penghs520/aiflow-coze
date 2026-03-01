@@ -6,7 +6,7 @@ import org.springframework.context.annotation.Configuration;
 
 @Data
 @Configuration
-@ConfigurationProperties(prefix = "spring.upload")
+@ConfigurationProperties(prefix = "app.upload")
 public class UploadConfig {
 
     private String basePath = "./uploads";
