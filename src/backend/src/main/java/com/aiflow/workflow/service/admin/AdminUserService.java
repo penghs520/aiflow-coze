@@ -141,6 +141,44 @@ public class AdminUserService {
         adminUserRepository.save(adminUser);
     }
 
+    public List<AdminUserResponse> listByStatus(Integer status) {
+        return adminUserRepository.findByStatus(status).stream()
+                .map(this::convertToResponse)
+                .collect(Collectors.toList());
+    }
+
+    public List<AdminUserResponse> searchAdmins(String keyword) {
+        Page<AdminUser> page = adminUserRepository.findByRealNameContainingOrUsernameContaining(
+                keyword, keyword, org.springframework.data.domain.PageRequest.of(0, 1000));
+        return page.stream()
+                .map(this::convertToResponse)
+                .collect(Collectors.toList());
+    }
+
+    public AdminUserResponse getAdmin(Long id) {
+        return getAdminById(id);
+    }
+
+    public Page<AdminUserResponse> listAdmins(Pageable pageable) {
+        return getAdminList(null, pageable);
+    }
+
+    @Transactional
+    public void toggleStatus(Long id, Integer status) {
+        AdminUser adminUser = adminUserRepository.findById(id)
+                .orElseThrow(() -> new BusinessException("管理员不存在"));
+
+        if (status == 0 && adminUser.getStatus() == 1) {
+            long activeCount = adminUserRepository.countByStatus(1);
+            if (activeCount <= 1) {
+                throw new BusinessException("至少保留一个启用的管理员");
+            }
+        }
+
+        adminUser.setStatus(status);
+        adminUserRepository.save(adminUser);
+    }
+
     private AdminUserResponse convertToResponse(AdminUser adminUser) {
         AdminRole role = adminRoleRepository.findById(adminUser.getRoleId()).orElse(null);
 

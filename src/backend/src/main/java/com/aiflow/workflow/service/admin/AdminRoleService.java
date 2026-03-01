@@ -1,14 +1,18 @@
 package com.aiflow.workflow.service.admin;
 
 import com.aiflow.workflow.dto.admin.AdminRoleRequest;
+import com.aiflow.workflow.entity.admin.AdminPermission;
 import com.aiflow.workflow.entity.admin.AdminRole;
 import com.aiflow.workflow.entity.admin.AdminRolePermission;
 import com.aiflow.workflow.exception.BusinessException;
+import com.aiflow.workflow.repository.admin.AdminPermissionRepository;
 import com.aiflow.workflow.repository.admin.AdminRolePermissionRepository;
 import com.aiflow.workflow.repository.admin.AdminRoleRepository;
 import com.aiflow.workflow.repository.admin.AdminUserRepository;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -23,6 +27,7 @@ public class AdminRoleService {
     private final AdminRoleRepository adminRoleRepository;
     private final AdminRolePermissionRepository rolePermissionRepository;
     private final AdminUserRepository adminUserRepository;
+    private final AdminPermissionRepository adminPermissionRepository;
 
     public List<AdminRole> getAllRoles() {
         return adminRoleRepository.findAll();
@@ -114,9 +119,44 @@ public class AdminRoleService {
         rolePermissionRepository.saveAll(rolePermissions);
     }
 
-    public List<Long> getRolePermissions(Long roleId) {
-        return rolePermissionRepository.findByRoleId(roleId).stream()
+    public Page<AdminRole> listRoles(Pageable pageable) {
+        return adminRoleRepository.findAll(pageable);
+    }
+
+    public List<AdminRole> listByStatus(Integer status) {
+        return adminRoleRepository.findByStatus(status);
+    }
+
+    public List<AdminRole> listActiveRoles() {
+        return getActiveRoles();
+    }
+
+    public AdminRole getRole(Long id) {
+        return getRoleById(id);
+    }
+
+    @Transactional
+    public void toggleStatus(Long id, Integer status) {
+        AdminRole role = adminRoleRepository.findById(id)
+                .orElseThrow(() -> new BusinessException("角色不存在"));
+
+        if (role.getIsSystem()) {
+            throw new BusinessException("系统内置角色不可修改状态");
+        }
+
+        role.setStatus(status);
+        adminRoleRepository.save(role);
+    }
+
+    public List<AdminPermission> getRolePermissions(Long roleId) {
+        List<Long> permissionIds = rolePermissionRepository.findByRoleId(roleId).stream()
                 .map(AdminRolePermission::getPermissionId)
                 .collect(Collectors.toList());
+
+        if (permissionIds.isEmpty()) {
+            return List.of();
+        }
+
+        return adminPermissionRepository.findAllById(permissionIds);
     }
 }

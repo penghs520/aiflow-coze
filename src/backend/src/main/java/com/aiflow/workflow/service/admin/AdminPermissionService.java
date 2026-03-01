@@ -37,6 +37,19 @@ public class AdminPermissionService {
         return adminPermissionRepository.findAll();
     }
 
+    public List<AdminPermission> listAllPermissions() {
+        return adminPermissionRepository.findAll();
+    }
+
+    public List<AdminPermission> listByModule(String module) {
+        return adminPermissionRepository.findByModule(module);
+    }
+
+    public AdminPermission getPermission(Long id) {
+        return adminPermissionRepository.findById(id)
+                .orElseThrow(() -> new RuntimeException("权限不存在"));
+    }
+
     private Map<String, Object> buildPermissionNode(AdminPermission permission, List<AdminPermission> allPermissions) {
         Map<String, Object> node = new HashMap<>();
         node.put("id", permission.getId());
