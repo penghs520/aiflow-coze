@@ -6,7 +6,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.web.PageableDefault;
-import org.springframework.http.ResponseEntity;
+import com.aiflow.workflow.dto.Result;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -26,61 +26,61 @@ public class AdminSystemConfigController {
      * 分页查询配置
      */
     @GetMapping
-    public ResponseEntity<Page<SystemConfig>> listConfigs(@PageableDefault(size = 20) Pageable pageable) {
-        return ResponseEntity.ok(systemConfigService.listConfigs(pageable));
+    public Result<Page<SystemConfig>> listConfigs(@PageableDefault(size = 20) Pageable pageable) {
+        return Result.success(systemConfigService.listConfigs(pageable));
     }
 
     /**
      * 根据类型查询配置
      */
     @GetMapping("/type/{configType}")
-    public ResponseEntity<List<SystemConfig>> listByType(@PathVariable String configType) {
-        return ResponseEntity.ok(systemConfigService.listByType(configType));
+    public Result<List<SystemConfig>> listByType(@PathVariable String configType) {
+        return Result.success(systemConfigService.listByType(configType));
     }
 
     /**
      * 获取系统配置列表
      */
     @GetMapping("/system")
-    public ResponseEntity<List<SystemConfig>> listSystemConfigs() {
-        return ResponseEntity.ok(systemConfigService.listSystemConfigs());
+    public Result<List<SystemConfig>> listSystemConfigs() {
+        return Result.success(systemConfigService.listSystemConfigs());
     }
 
     /**
      * 获取自定义配置列表
      */
     @GetMapping("/custom")
-    public ResponseEntity<List<SystemConfig>> listCustomConfigs() {
-        return ResponseEntity.ok(systemConfigService.listCustomConfigs());
+    public Result<List<SystemConfig>> listCustomConfigs() {
+        return Result.success(systemConfigService.listCustomConfigs());
     }
 
     /**
      * 根据配置键获取配置
      */
     @GetMapping("/{configKey}")
-    public ResponseEntity<SystemConfig> getConfig(@PathVariable String configKey) {
-        return ResponseEntity.ok(systemConfigService.getByKey(configKey));
+    public Result<SystemConfig> getConfig(@PathVariable String configKey) {
+        return Result.success(systemConfigService.getByKey(configKey));
     }
 
     /**
      * 创建配置
      */
     @PostMapping
-    public ResponseEntity<SystemConfig> createConfig(@RequestBody Map<String, String> request) {
+    public Result<SystemConfig> createConfig(@RequestBody Map<String, String> request) {
         SystemConfig config = systemConfigService.createConfig(
                 request.get("configKey"),
                 request.get("configValue"),
                 request.get("configType"),
                 request.get("description")
         );
-        return ResponseEntity.ok(config);
+        return Result.success(config);
     }
 
     /**
      * 更新配置
      */
     @PutMapping("/{configKey}")
-    public ResponseEntity<SystemConfig> updateConfig(
+    public Result<SystemConfig> updateConfig(
             @PathVariable String configKey,
             @RequestBody Map<String, String> request) {
         SystemConfig config = systemConfigService.updateConfig(
@@ -89,24 +89,24 @@ public class AdminSystemConfigController {
                 request.get("configType"),
                 request.get("description")
         );
-        return ResponseEntity.ok(config);
+        return Result.success(config);
     }
 
     /**
      * 删除配置
      */
     @DeleteMapping("/{configKey}")
-    public ResponseEntity<Void> deleteConfig(@PathVariable String configKey) {
+    public Result<Void> deleteConfig(@PathVariable String configKey) {
         systemConfigService.deleteConfig(configKey);
-        return ResponseEntity.ok().build();
+        return Result.success();
     }
 
     /**
      * 批量删除配置
      */
     @DeleteMapping("/batch")
-    public ResponseEntity<Void> batchDelete(@RequestBody List<String> configKeys) {
+    public Result<Void> batchDelete(@RequestBody List<String> configKeys) {
         systemConfigService.batchDelete(configKeys);
-        return ResponseEntity.ok().build();
+        return Result.success();
     }
 }

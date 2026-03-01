@@ -7,7 +7,7 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.web.PageableDefault;
 import org.springframework.format.annotation.DateTimeFormat;
-import org.springframework.http.ResponseEntity;
+import com.aiflow.workflow.dto.Result;
 import org.springframework.web.bind.annotation.*;
 
 import java.time.LocalDateTime;
@@ -27,46 +27,46 @@ public class AdminOperationLogController {
      * 分页查询操作日志
      */
     @GetMapping
-    public ResponseEntity<Page<OperationLog>> listLogs(@PageableDefault(size = 20) Pageable pageable) {
-        return ResponseEntity.ok(operationLogService.listLogs(pageable));
+    public Result<Page<OperationLog>> listLogs(@PageableDefault(size = 20) Pageable pageable) {
+        return Result.success(operationLogService.listLogs(pageable));
     }
 
     /**
      * 根据管理员ID查询日志
      */
     @GetMapping("/admin/{adminId}")
-    public ResponseEntity<Page<OperationLog>> listByAdmin(
+    public Result<Page<OperationLog>> listByAdmin(
             @PathVariable Long adminId,
             @PageableDefault(size = 20) Pageable pageable) {
-        return ResponseEntity.ok(operationLogService.listByAdmin(adminId, pageable));
+        return Result.success(operationLogService.listByAdmin(adminId, pageable));
     }
 
     /**
      * 根据模块查询日志
      */
     @GetMapping("/module/{module}")
-    public ResponseEntity<Page<OperationLog>> listByModule(
+    public Result<Page<OperationLog>> listByModule(
             @PathVariable String module,
             @PageableDefault(size = 20) Pageable pageable) {
-        return ResponseEntity.ok(operationLogService.listByModule(module, pageable));
+        return Result.success(operationLogService.listByModule(module, pageable));
     }
 
     /**
      * 根据时间范围查询日志
      */
     @GetMapping("/range")
-    public ResponseEntity<Page<OperationLog>> listByDateRange(
+    public Result<Page<OperationLog>> listByDateRange(
             @RequestParam @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME) LocalDateTime startTime,
             @RequestParam @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME) LocalDateTime endTime,
             @PageableDefault(size = 20) Pageable pageable) {
-        return ResponseEntity.ok(operationLogService.listByDateRange(startTime, endTime, pageable));
+        return Result.success(operationLogService.listByDateRange(startTime, endTime, pageable));
     }
 
     /**
      * 获取日志详情
      */
     @GetMapping("/{id}")
-    public ResponseEntity<OperationLog> getLog(@PathVariable Long id) {
-        return ResponseEntity.ok(operationLogService.getLog(id));
+    public Result<OperationLog> getLog(@PathVariable Long id) {
+        return Result.success(operationLogService.getLog(id));
     }
 }

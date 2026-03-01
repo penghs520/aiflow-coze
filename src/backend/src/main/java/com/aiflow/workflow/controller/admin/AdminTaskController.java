@@ -6,7 +6,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.web.PageableDefault;
-import org.springframework.http.ResponseEntity;
+import com.aiflow.workflow.dto.Result;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -26,95 +26,95 @@ public class AdminTaskController {
      * 分页查询任务
      */
     @GetMapping
-    public ResponseEntity<Page<Task>> listTasks(@PageableDefault(size = 20) Pageable pageable) {
-        return ResponseEntity.ok(adminTaskService.listTasks(pageable));
+    public Result<Page<Task>> listTasks(@PageableDefault(size = 20) Pageable pageable) {
+        return Result.success(adminTaskService.listTasks(pageable));
     }
 
     /**
      * 根据状态查询任务
      */
     @GetMapping("/status/{status}")
-    public ResponseEntity<List<Task>> listByStatus(@PathVariable Integer status) {
-        return ResponseEntity.ok(adminTaskService.listByStatus(status));
+    public Result<List<Task>> listByStatus(@PathVariable Integer status) {
+        return Result.success(adminTaskService.listByStatus(status));
     }
 
     /**
      * 根据用户ID查询任务
      */
     @GetMapping("/user/{userId}")
-    public ResponseEntity<Page<Task>> listByUser(
+    public Result<Page<Task>> listByUser(
             @PathVariable Long userId,
             @PageableDefault(size = 20) Pageable pageable) {
-        return ResponseEntity.ok(adminTaskService.listByUser(userId, pageable));
+        return Result.success(adminTaskService.listByUser(userId, pageable));
     }
 
     /**
      * 根据工作流ID查询任务
      */
     @GetMapping("/workflow/{workflowId}")
-    public ResponseEntity<List<Task>> listByWorkflow(@PathVariable String workflowId) {
-        return ResponseEntity.ok(adminTaskService.listByWorkflow(workflowId));
+    public Result<List<Task>> listByWorkflow(@PathVariable String workflowId) {
+        return Result.success(adminTaskService.listByWorkflow(workflowId));
     }
 
     /**
      * 获取任务详情
      */
     @GetMapping("/{id}")
-    public ResponseEntity<Task> getTask(@PathVariable String id) {
-        return ResponseEntity.ok(adminTaskService.getTask(id));
+    public Result<Task> getTask(@PathVariable String id) {
+        return Result.success(adminTaskService.getTask(id));
     }
 
     /**
      * 取消任务
      */
     @PutMapping("/{id}/cancel")
-    public ResponseEntity<Void> cancelTask(@PathVariable String id) {
+    public Result<Void> cancelTask(@PathVariable String id) {
         adminTaskService.cancelTask(id);
-        return ResponseEntity.ok().build();
+        return Result.success();
     }
 
     /**
      * 批量取消任务
      */
     @PutMapping("/batch/cancel")
-    public ResponseEntity<Void> batchCancel(@RequestBody List<String> ids) {
+    public Result<Void> batchCancel(@RequestBody List<String> ids) {
         adminTaskService.batchCancel(ids);
-        return ResponseEntity.ok().build();
+        return Result.success();
     }
 
     /**
      * 查询超时任务
      */
     @GetMapping("/timeout")
-    public ResponseEntity<List<Task>> findTimeoutTasks(@RequestParam(defaultValue = "60") int timeoutMinutes) {
-        return ResponseEntity.ok(adminTaskService.findTimeoutTasks(timeoutMinutes));
+    public Result<List<Task>> findTimeoutTasks(@RequestParam(defaultValue = "60") int timeoutMinutes) {
+        return Result.success(adminTaskService.findTimeoutTasks(timeoutMinutes));
     }
 
     /**
      * 获取处理中的任务
      */
     @GetMapping("/processing")
-    public ResponseEntity<List<Task>> getProcessingTasks() {
-        return ResponseEntity.ok(adminTaskService.getProcessingTasks());
+    public Result<List<Task>> getProcessingTasks() {
+        return Result.success(adminTaskService.getProcessingTasks());
     }
 
     /**
      * 获取排队中的任务
      */
     @GetMapping("/queued")
-    public ResponseEntity<List<Task>> getQueuedTasks() {
-        return ResponseEntity.ok(adminTaskService.getQueuedTasks());
+    public Result<List<Task>> getQueuedTasks() {
+        return Result.success(adminTaskService.getQueuedTasks());
     }
 
     /**
      * 统计任务数量
      */
     @GetMapping("/stats/count")
-    public ResponseEntity<Map<String, Long>> countTasks(@RequestParam(required = false) Integer status) {
+    public Result<Map<String, Long>> countTasks(@RequestParam(required = false) Integer status) {
         if (status != null) {
-            return ResponseEntity.ok(Map.of("count", adminTaskService.countByStatus(status)));
+            return Result.success(Map.of("count", adminTaskService.countByStatus(status)));
         }
-        return ResponseEntity.ok(Map.of(
+        return Result.success(Map.of(
                 "total", adminTaskService.countTasks(),
                 "today", adminTaskService.countTodayTasks()
         ));

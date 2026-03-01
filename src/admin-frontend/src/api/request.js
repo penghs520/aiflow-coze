@@ -24,7 +24,9 @@ request.interceptors.request.use(
 request.interceptors.response.use(
   response => {
     const res = response.data
-    if (res.code !== 200) {
+
+    // 统一响应格式处理
+    if (res.code !== undefined && res.code !== 200) {
       ElMessage.error(res.message || '请求失败')
       if (res.code === 401) {
         removeToken()
@@ -32,10 +34,20 @@ request.interceptors.response.use(
       }
       return Promise.reject(new Error(res.message || '请求失败'))
     }
+
+    // 返回data字段的数据
     return res.data
   },
   error => {
-    ElMessage.error(error.message || '网络错误')
+    const message = error.response?.data?.message || error.message || '网络错误'
+    ElMessage.error(message)
+
+    // 401未授权，跳转登录页
+    if (error.response?.status === 401) {
+      removeToken()
+      router.push('/login')
+    }
+
     return Promise.reject(error)
   }
 )

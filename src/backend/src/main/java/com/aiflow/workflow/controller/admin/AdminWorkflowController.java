@@ -1,5 +1,6 @@
 package com.aiflow.workflow.controller.admin;
 
+import com.aiflow.workflow.dto.Result;
 import com.aiflow.workflow.dto.admin.WorkflowAdminRequest;
 import com.aiflow.workflow.entity.Workflow;
 import com.aiflow.workflow.service.admin.AdminWorkflowService;
@@ -8,7 +9,6 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.web.PageableDefault;
-import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -28,107 +28,107 @@ public class AdminWorkflowController {
      * 分页查询工作流
      */
     @GetMapping
-    public ResponseEntity<Page<Workflow>> listWorkflows(@PageableDefault(size = 20) Pageable pageable) {
-        return ResponseEntity.ok(adminWorkflowService.listWorkflows(pageable));
+    public Result<Page<Workflow>> listWorkflows(@PageableDefault(size = 20) Pageable pageable) {
+        return Result.success(adminWorkflowService.listWorkflows(pageable));
     }
 
     /**
      * 搜索工作流
      */
     @GetMapping("/search")
-    public ResponseEntity<Page<Workflow>> searchWorkflows(
+    public Result<Page<Workflow>> searchWorkflows(
             @RequestParam String keyword,
             @PageableDefault(size = 20) Pageable pageable) {
-        return ResponseEntity.ok(adminWorkflowService.searchWorkflows(keyword, pageable));
+        return Result.success(adminWorkflowService.searchWorkflows(keyword, pageable));
     }
 
     /**
      * 根据分类查询工作流
      */
     @GetMapping("/category/{category}")
-    public ResponseEntity<List<Workflow>> listByCategory(@PathVariable String category) {
-        return ResponseEntity.ok(adminWorkflowService.listByCategory(category));
+    public Result<List<Workflow>> listByCategory(@PathVariable String category) {
+        return Result.success(adminWorkflowService.listByCategory(category));
     }
 
     /**
      * 获取工作流详情
      */
     @GetMapping("/{id}")
-    public ResponseEntity<Workflow> getWorkflow(@PathVariable String id) {
-        return ResponseEntity.ok(adminWorkflowService.getWorkflow(id));
+    public Result<Workflow> getWorkflow(@PathVariable String id) {
+        return Result.success(adminWorkflowService.getWorkflow(id));
     }
 
     /**
      * 创建工作流
      */
     @PostMapping
-    public ResponseEntity<Workflow> createWorkflow(@Valid @RequestBody WorkflowAdminRequest request) {
-        return ResponseEntity.ok(adminWorkflowService.createWorkflow(request));
+    public Result<Workflow> createWorkflow(@Valid @RequestBody WorkflowAdminRequest request) {
+        return Result.success(adminWorkflowService.createWorkflow(request));
     }
 
     /**
      * 更新工作流
      */
     @PutMapping("/{id}")
-    public ResponseEntity<Workflow> updateWorkflow(
+    public Result<Workflow> updateWorkflow(
             @PathVariable String id,
             @Valid @RequestBody WorkflowAdminRequest request) {
-        return ResponseEntity.ok(adminWorkflowService.updateWorkflow(id, request));
+        return Result.success(adminWorkflowService.updateWorkflow(id, request));
     }
 
     /**
      * 删除工作流
      */
     @DeleteMapping("/{id}")
-    public ResponseEntity<Void> deleteWorkflow(@PathVariable String id) {
+    public Result<Void> deleteWorkflow(@PathVariable String id) {
         adminWorkflowService.deleteWorkflow(id);
-        return ResponseEntity.ok().build();
+        return Result.success();
     }
 
     /**
      * 上架工作流
      */
     @PutMapping("/{id}/publish")
-    public ResponseEntity<Void> publishWorkflow(@PathVariable String id) {
+    public Result<Void> publishWorkflow(@PathVariable String id) {
         adminWorkflowService.publishWorkflow(id);
-        return ResponseEntity.ok().build();
+        return Result.success();
     }
 
     /**
      * 下架工作流
      */
     @PutMapping("/{id}/unpublish")
-    public ResponseEntity<Void> unpublishWorkflow(@PathVariable String id) {
+    public Result<Void> unpublishWorkflow(@PathVariable String id) {
         adminWorkflowService.unpublishWorkflow(id);
-        return ResponseEntity.ok().build();
+        return Result.success();
     }
 
     /**
      * 更新排序
      */
     @PutMapping("/{id}/sort")
-    public ResponseEntity<Void> updateSortOrder(
+    public Result<Void> updateSortOrder(
             @PathVariable String id,
             @RequestBody Map<String, Integer> request) {
         adminWorkflowService.updateSortOrder(id, request.get("sortOrder"));
-        return ResponseEntity.ok().build();
+        return Result.success();
     }
 
     /**
      * 批量上架
      */
     @PutMapping("/batch/publish")
-    public ResponseEntity<Void> batchPublish(@RequestBody List<String> ids) {
+    public Result<Void> batchPublish(@RequestBody List<String> ids) {
         adminWorkflowService.batchPublish(ids);
-        return ResponseEntity.ok().build();
+        return Result.success();
     }
 
     /**
      * 批量下架
      */
     @PutMapping("/batch/unpublish")
-    public ResponseEntity<Void> batchUnpublish(@RequestBody List<String> ids) {
+    public Result<Void> batchUnpublish(@RequestBody List<String> ids) {
         adminWorkflowService.batchUnpublish(ids);
-        return ResponseEntity.ok().build();
+        return Result.success();
     }
 }
