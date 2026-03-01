@@ -75,3 +75,23 @@ export const batchUnpublish = (ids) => {
     data: ids
   })
 }
+
+// 管理员执行工作流（内测）
+export const executeWorkflow = (workflowId, parameters) => {
+  return request({
+    url: '/admin/v1/tasks/execute',
+    method: 'post',
+    data: {
+      workflowId,
+      parameters
+    }
+  })
+}
+
+// 获取工作流参数定义（从Coze平台）
+export const getWorkflowParameters = (id) => {
+  return request({
+    url: `/admin/v1/workflows/${id}/parameters`,
+    method: 'get'
+  })
+}

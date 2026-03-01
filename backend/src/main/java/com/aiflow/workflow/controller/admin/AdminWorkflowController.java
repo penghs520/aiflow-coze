@@ -3,6 +3,7 @@ package com.aiflow.workflow.controller.admin;
 import com.aiflow.workflow.dto.Result;
 import com.aiflow.workflow.dto.admin.WorkflowAdminRequest;
 import com.aiflow.workflow.entity.Workflow;
+import com.aiflow.workflow.service.CozeService;
 import com.aiflow.workflow.service.admin.AdminWorkflowService;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
@@ -23,6 +24,7 @@ import java.util.Map;
 public class AdminWorkflowController {
 
     private final AdminWorkflowService adminWorkflowService;
+    private final CozeService cozeService;
 
     /**
      * 分页查询工作流
@@ -30,6 +32,16 @@ public class AdminWorkflowController {
     @GetMapping
     public Result<Page<Workflow>> listWorkflows(@PageableDefault(size = 20) Pageable pageable) {
         return Result.success(adminWorkflowService.listWorkflows(pageable));
+    }
+
+    /**
+     * 获取工作流参数定义（从Coze平台查询）
+     */
+    @GetMapping("/{id}/parameters")
+    public Result<List<Map<String, Object>>> getWorkflowParameters(@PathVariable String id) {
+        Workflow workflow = adminWorkflowService.getWorkflow(id);
+        List<Map<String, Object>> parameters = cozeService.getWorkflowParameters(workflow.getCozeWorkflowId());
+        return Result.success(parameters);
     }
 
     /**

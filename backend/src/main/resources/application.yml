@@ -97,9 +97,9 @@ app:
 
   # Coze API integration
   coze:
-    base-url: https://api.coze.com
-    api-key: simulated-api-key
-    simulate: true
+    base-url: https://api.coze.cn
+    api-key: pat_skZYTGEKi3Ii7eQkzg3XPxrsMrjyorkFNlPYcPtOJIA1EVehPtFfG6GVfz4g6402
+    simulate: false
 
 # File upload configuration
   upload:

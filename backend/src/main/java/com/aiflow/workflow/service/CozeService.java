@@ -9,8 +9,7 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 
 import java.io.IOException;
-import java.util.HashMap;
-import java.util.Map;
+import java.util.*;
 import java.util.concurrent.TimeUnit;
 
 /**
@@ -168,6 +167,125 @@ public class CozeService {
         public boolean isFailed() {
             return "failed".equals(status);
         }
+    }
+
+    /**
+     * 查询工作流参数定义
+     */
+    public List<Map<String, Object>> getWorkflowParameters(String workflowId) {
+        if (simulate) {
+            // 模拟模式返回空参数列表
+            return new ArrayList<>();
+        }
+
+        try {
+            // 构建带参数的请求 URL
+            String urlStr = baseUrl + "/v1/workflows/" + workflowId + "?include_input_output=true";
+
+            Request request = new Request.Builder()
+                    .url(urlStr)
+                    .header("Authorization", "Bearer " + apiKey)
+                    .get()
+                    .build();
+
+            try (Response response = httpClient.newCall(request).execute()) {
+                if (!response.isSuccessful()) {
+                    throw new IOException("请求失败: " + response);
+                }
+
+                ResponseBody body = response.body();
+                if (body == null) {
+                    throw new IOException("响应体为空");
+                }
+                String responseBody = body.string();
+                JsonNode jsonNode = objectMapper.readTree(responseBody);
+
+                // 解析返回的数据结构: data.input.parameters
+                if (jsonNode.has("data") && jsonNode.get("data").has("input")) {
+                    JsonNode inputNode = jsonNode.get("data").get("input");
+                    if (inputNode.has("parameters")) {
+                        JsonNode parameters = inputNode.get("parameters");
+                        // 将参数对象转换为数组格式
+                        return convertParametersToArray(parameters);
+                    }
+                }
+                return new ArrayList<>();
+            }
+        } catch (Exception e) {
+            log.error("查询工作流参数定义失败", e);
+            throw new RuntimeException("查询工作流参数定义失败: " + e.getMessage());
+        }
+    }
+
+    /**
+     * 将参数对象转换为数组格式
+     * 输入: {"img": {...}, "title": {...}}
+     * 输出: [{"key": "img", ...}, {"key": "title", ...}]
+     */
+    private List<Map<String, Object>> convertParametersToArray(JsonNode parametersNode) {
+        if (!parametersNode.isObject()) {
+            return new ArrayList<>();
+        }
+
+        List<Map<String, Object>> result = new ArrayList<>();
+        var fields = parametersNode.fields();
+
+        while (fields.hasNext()) {
+            var entry = fields.next();
+            Map<String, Object> paramObj = new LinkedHashMap<>();
+
+            // 设置 key 字段
+            paramObj.put("key", entry.getKey());
+
+            // 复制其他字段
+            var valueNode = entry.getValue();
+            if (valueNode.has("required")) {
+                paramObj.put("required", valueNode.get("required").asBoolean());
+            } else {
+                paramObj.put("required", false);
+            }
+            if (valueNode.has("description")) {
+                paramObj.put("description", valueNode.get("description").asText());
+            }
+            if (valueNode.has("type")) {
+                paramObj.put("type", convertCozeType(valueNode.get("type").asText()));
+            }
+            if (valueNode.has("default_value")) {
+                paramObj.put("default", valueNode.get("default_value").asText());
+            }
+
+            result.add(paramObj);
+        }
+
+        // 排序：必填参数在前，然后按 key 字母顺序
+        result.sort((a, b) -> {
+            boolean aRequired = (boolean) a.get("required");
+            boolean bRequired = (boolean) b.get("required");
+            String aKey = (String) a.get("key");
+            String bKey = (String) b.get("key");
+
+            if (aRequired != bRequired) {
+                return aRequired ? -1 : 1; // 必填在前
+            }
+            return aKey.compareTo(bKey); // 按 key 字母顺序
+        });
+
+        return result;
+    }
+
+    /**
+     * 转换 Coze 参数类型为前端统一类型
+     */
+    private String convertCozeType(String cozeType) {
+        return switch (cozeType) {
+            case "integer", "number" -> "number";
+            case "image" -> "image_file";
+            case "video" -> "video_file";
+            case "audio" -> "audio_file";
+            case "boolean" -> "boolean";
+            case "array" -> "multi_select";
+            default -> "text";
+        };
     }
 }
 

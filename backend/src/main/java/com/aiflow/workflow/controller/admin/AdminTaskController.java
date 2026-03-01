@@ -1,13 +1,17 @@
 package com.aiflow.workflow.controller.admin;
 
+import com.aiflow.workflow.dto.Result;
 import com.aiflow.workflow.entity.Task;
 import com.aiflow.workflow.service.admin.AdminTaskService;
+import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.web.PageableDefault;
-import com.aiflow.workflow.dto.Result;
+import org.springframework.security.core.Authentication;
 import org.springframework.web.bind.annotation.*;
+
+import java.util.Map;
 
 import java.util.List;
 import java.util.Map;
@@ -118,5 +122,21 @@ public class AdminTaskController {
                 "total", adminTaskService.countTasks(),
                 "today", adminTaskService.countTodayTasks()
         ));
+    }
+
+    /**
+     * 管理员执行工作流（内测使用）
+     */
+    @PostMapping("/execute")
+    public Result<Task> executeWorkflow(
+            Authentication authentication,
+            @Valid @RequestBody Map<String, Object> request) {
+        Long userId = (Long) authentication.getPrincipal();
+        String workflowId = (String) request.get("workflowId");
+        @SuppressWarnings("unchecked")
+        Map<String, Object> parameters = (Map<String, Object>) request.get("parameters");
+
+        Task task = adminTaskService.executeWorkflow(workflowId, userId, parameters);
+        return Result.success(task);
     }
 }
