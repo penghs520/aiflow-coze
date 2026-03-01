@@ -1,0 +1,44 @@
+# IDE
+.idea/
+.vscode/
+*.iml
+*.iws
+*.ipr
+.DS_Store
+
+# Backend (Java/Maven)
+src/backend/target/
+src/backend/*.class
+src/backend/logs/
+src/backend/*.log
+
+# Frontend (Node.js)
+src/admin-frontend/node_modules/
+src/admin-frontend/dist/
+src/admin-frontend/.pnpm-store/
+src/admin-frontend/*.log
+
+# Android
+src/android/build/
+src/android/.gradle/
+src/android/local.properties
+
+# Docker volumes
+mysql_data/
+redis_data/
+
+# Temp files
+*.tmp
+*.bak
+*.swp
+*~
+
+# Environment files
+.env
+.env.local
+application-local.yml
+application-dev.yml
+
+# OS
+.DS_Store
+Thumbs.db

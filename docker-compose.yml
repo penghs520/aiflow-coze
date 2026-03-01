@@ -1,0 +1,58 @@
+version: '3.8'
+
+services:
+  # MySQL数据库
+  mysql:
+    image: mysql:8.0
+    container_name: aiflow-mysql
+    restart: always
+    environment:
+      MYSQL_ROOT_PASSWORD: root
+      MYSQL_DATABASE: ai_workflow
+      MYSQL_USER: aiflow
+      MYSQL_PASSWORD: aiflow123
+      TZ: Asia/Shanghai
+    ports:
+      - "3307:3306"  # 使用3307避免与本地MySQL冲突
+    volumes:
+      - mysql_data:/var/lib/mysql
+      - ./src/backend/src/main/resources/db:/docker-entrypoint-initdb.d
+    command:
+      - --character-set-server=utf8mb4
+      - --collation-server=utf8mb4_unicode_ci
+      - --default-authentication-plugin=mysql_native_password
+    networks:
+      - aiflow-network
+    healthcheck:
+      test: ["CMD", "mysqladmin", "ping", "-h", "localhost", "-uroot", "-proot"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+
+  # Redis缓存
+  redis:
+    image: redis:7-alpine
+    container_name: aiflow-redis
+    restart: always
+    ports:
+      - "6380:6379"  # 使用6380避免与本地Redis冲突
+    volumes:
+      - redis_data:/data
+    command: redis-server --appendonly yes
+    networks:
+      - aiflow-network
+    healthcheck:
+      test: ["CMD", "redis-cli", "ping"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+
+volumes:
+  mysql_data:
+    driver: local
+  redis_data:
+    driver: local
+
+networks:
+  aiflow-network:
+    driver: bridge

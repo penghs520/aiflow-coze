@@ -1,0 +1,141 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<mxfile host="app.diagrams.net" version="24.0.0">
+  <diagram id="admin-arch" name="后台管理系统架构图">
+    <mxGraphModel dx="1200" dy="800" grid="1" gridSize="10" guides="1" tooltips="1" connect="1" arrows="1" fold="1" page="1" pageScale="1" pageWidth="827" pageHeight="1169" math="0" shadow="0">
+      <root>
+        <mxCell id="0" />
+        <mxCell id="1" parent="0" />
+        
+        
+        <mxCell id="layer-client" value="客户端层" style="shape=swimlane;perimeter=swimlanePerimeter;whiteSpace=wrap;html=1;fillColor=#E6F3FF;strokeColor=#0066CC;fontSize=14;fontColor=#333333;" vertex="1" parent="1">
+          <mxGeometry x="100" y="50" width="1000" height="600" as="geometry" />
+        </mxCell>
+        
+        
+        <mxCell id="admin-frontend" value="&lt;b&gt;后台管理前端&lt;/b&gt;&lt;br&gt;Vue 3 + Element Plus" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#D5E8D4;strokeColor=#82B366;fontSize=12;" vertex="1" parent="layer-client">
+          <mxGeometry x="150" y="100" width="180" height="80" as="geometry" />
+        </mxCell>
+        
+        
+        <mxCell id="module-workflow" value="工作流管理模块" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#FFF2CC;strokeColor=#D6B656;fontSize=12;" vertex="1" parent="layer-client">
+          <mxGeometry x="150" y="200" width="180" height="60" as="geometry" />
+        </mxCell>
+        
+        <mxCell id="module-user" value="用户管理模块" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#FFF2CC;strokeColor=#D6B656;fontSize=12;" vertex="1" parent="layer-client">
+          <mxGeometry x="150" y="280" width="180" height="60" as="geometry" />
+        </mxCell>
+        
+        <mxCell id="module-task" value="任务监控模块" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#FFF2CC;strokeColor=#D6B656;fontSize=12;" vertex="1" parent="layer-client">
+          <mxGeometry x="150" y="360" width="180" height="60" as="geometry" />
+        </mxCell>
+        
+        <mxCell id="module-stat" value="数据统计模块" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#FFF2CC;strokeColor=#D6B656;fontSize=12;" vertex="1" parent="layer-client">
+          <mxGeometry x="150" y="440" width="180" height="60" as="geometry" />
+        </mxCell>
+        
+        
+        <mxCell id="layer-gateway" value="接入层" style="shape=swimlane;perimeter=swimlanePerimeter;whiteSpace=wrap;html=1;fillColor=#F8CECC;strokeColor=#B85450;fontSize=14;fontColor=#333333;" vertex="1" parent="1">
+          <mxGeometry x="100" y="680" width="1000" height="810" as="geometry" />
+        </mxCell>
+        
+        <mxCell id="api-gateway" value="&lt;b&gt;API网关&lt;/b&gt;&lt;br&gt;Spring Cloud Gateway" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#F5F5F5;strokeColor=#666666;fontSize=12;" vertex="1" parent="layer-gateway">
+          <mxGeometry x="400" y="720" width="200" height="60" as="geometry" />
+        </mxCell>
+        
+        
+        <mxCell id="layer-application" value="应用层" style="shape=swimlane;perimeter=swimlanePerimeter;whiteSpace=wrap;html=1;fillColor=#E1D5E7;strokeColor=#9673A6;fontSize=14;fontColor=#333333;" vertex="1" parent="1">
+          <mxGeometry x="1170" y="1560" width="1000" height="1200" as="geometry" />
+        </mxCell>
+        
+        
+        <mxCell id="admin-service" value="&lt;b&gt;后台管理服务&lt;/b&gt;&lt;br&gt;SpringBoot Module" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#D5E8D4;strokeColor=#82B366;fontSize=12;" vertex="1" parent="layer-application">
+          <mxGeometry x="150" y="880" width="180" height="80" as="geometry" />
+        </mxCell>
+        
+        
+        <mxCell id="ctrl-workflow" value="WorkflowController" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#FFF2CC;strokeColor=#D6B656;fontSize=11;" vertex="1" parent="layer-application">
+          <mxGeometry x="150" y="980" width="180" height="40" as="geometry" />
+        </mxCell>
+        
+        <mxCell id="ctrl-user" value="UserAdminController" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#FFF2CC;strokeColor=#D6B656;fontSize=11;" vertex="1" parent="layer-application">
+          <mxGeometry x="150" y="1030" width="180" height="40" as="geometry" />
+        </mxCell>
+        
+        <mxCell id="ctrl-task" value="TaskAdminController" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#FFF2CC;strokeColor=#D6B656;fontSize=11;" vertex="1" parent="layer-application">
+          <mxGeometry x="150" y="1080" width="180" height="40" as="geometry" />
+        </mxCell>
+        
+        <mxCell id="ctrl-stat" value="StatisticsController" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#FFF2CC;strokeColor=#D6B656;fontSize=11;" vertex="1" parent="layer-application">
+          <mxGeometry x="150" y="1130" width="180" height="40" as="geometry" />
+        </mxCell>
+        
+        
+        <mxCell id="service-layer" value="&lt;b&gt;业务服务层&lt;/b&gt;&lt;br&gt;Service Classes" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#DAE8FC;strokeColor=#6C8EBF;fontSize=12;" vertex="1" parent="layer-application">
+          <mxGeometry x="400" y="880" width="180" height="80" as="geometry" />
+        </mxCell>
+        
+        
+        <mxCell id="layer-data" value="数据层" style="shape=swimlane;perimeter=swimlanePerimeter;whiteSpace=wrap;html=1;fillColor=#F8CECC;strokeColor=#B85450;fontSize=14;fontColor=#333333;" vertex="1" parent="1">
+          <mxGeometry x="100" y="1560" width="1000" height="1410" as="geometry" />
+        </mxCell>
+        
+        
+        <mxCell id="mysql-db" value="&lt;b&gt;MySQL 8.0&lt;/b&gt;&lt;br&gt;核心业务数据" style="cylinder;whiteSpace=wrap;html=1;fillColor=#F5F5F5;strokeColor=#666666;fontSize=12;" vertex="1" parent="layer-data">
+          <mxGeometry x="200" y="1300" width="160" height="80" as="geometry" />
+        </mxCell>
+        
+        
+        <mxCell id="redis-cache" value="&lt;b&gt;Redis 7.0&lt;/b&gt;&lt;br&gt;缓存与会话" style="cylinder;whiteSpace=wrap;html=1;fillColor=#F5F5F5;strokeColor=#666666;fontSize=12;" vertex="1" parent="layer-data">
+          <mxGeometry x="500" y="1300" width="160" height="80" as="geometry" />
+        </mxCell>
+        
+        
+        <mxCell id="oss-storage" value="&lt;b&gt;阿里云OSS&lt;/b&gt;&lt;br&gt;文件存储" style="cylinder;whiteSpace=wrap;html=1;fillColor=#F5F5F5;strokeColor=#666666;fontSize=12;" vertex="1" parent="layer-data">
+          <mxGeometry x="800" y="1300" width="160" height="80" as="geometry" />
+        </mxCell>
+        
+        
+        
+        <mxCell id="conn-front-gateway" style="edgeStyle=orthogonalEdgeStyle;rounded=0;html=1;exitX=0.5;exitY=1;entryX=0.5;entryY=0;endArrow=block;endFill=1;" edge="1" parent="1" source="admin-frontend" target="api-gateway">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        
+        
+        <mxCell id="conn-gateway-service" style="edgeStyle=orthogonalEdgeStyle;rounded=0;html=1;exitX=0.5;exitY=1;entryX=0.5;entryY=0;endArrow=block;endFill=1;" edge="1" parent="1" source="api-gateway" target="admin-service">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        
+        
+        <mxCell id="conn-service-ctrl" style="edgeStyle=orthogonalEdgeStyle;rounded=0;html=1;exitX=1;exitY=0.5;entryX=0;entryY=0.5;endArrow=block;endFill=1;" edge="1" parent="1" source="admin-service" target="ctrl-workflow">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        
+        
+        <mxCell id="conn-ctrl-service" style="edgeStyle=orthogonalEdgeStyle;rounded=0;html=1;exitX=1;exitY=0.5;entryX=0;entryY=0.5;endArrow=block;endFill=1;" edge="1" parent="1" source="ctrl-workflow" target="service-layer">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        
+        
+        <mxCell id="conn-service-data" style="edgeStyle=orthogonalEdgeStyle;rounded=0;html=1;exitX=0.5;exitY=1;entryX=0.5;entryY=0;endArrow=block;endFill=1;" edge="1" parent="1" source="service-layer" target="mysql-db">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        
+        
+        <mxCell id="conn-service-cache" style="edgeStyle=orthogonalEdgeStyle;rounded=0;html=1;exitX=0.5;exitY=1;entryX=0.5;entryY=0;endArrow=block;endFill=1;" edge="1" parent="1" source="service-layer" target="redis-cache">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        
+        
+        <mxCell id="conn-service-oss" style="edgeStyle=orthogonalEdgeStyle;rounded=0;html=1;exitX=0.5;exitY=1;entryX=0.5;entryY=0;endArrow=block;endFill=1;" edge="1" parent="1" source="service-layer" target="oss-storage">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        
+        
+        <mxCell id="conn-module-front" style="edgeStyle=orthogonalEdgeStyle;rounded=0;html=1;exitX=0;exitY=0.5;entryX=1;entryY=0.5;endArrow=open;endFill=0;dashed=1;" edge="1" parent="1" source="module-workflow" target="admin-frontend">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        
+      </root>
+    </mxGraphModel>
+  </diagram>
+</mxfile>

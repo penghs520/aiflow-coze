@@ -1,0 +1,126 @@
+server:
+  port: 8080
+  servlet:
+    context-path: /api
+
+spring:
+  application:
+    name: ai-workflow-backend
+
+  # Database configuration (Docker)
+  datasource:
+    driver-class-name: com.mysql.cj.jdbc.Driver
+    url: jdbc:mysql://localhost:3307/ai_workflow?useUnicode=true&characterEncoding=utf8&useSSL=false&serverTimezone=Asia/Shanghai&allowPublicKeyRetrieval=true
+    username: root
+    password: root
+    hikari:
+      maximum-pool-size: 20
+      minimum-idle: 5
+      connection-timeout: 30000
+      idle-timeout: 600000
+      max-lifetime: 1800000
+
+  # JPA configuration
+  jpa:
+    database-platform: org.hibernate.dialect.MySQL8Dialect
+    hibernate:
+      ddl-auto: update
+    show-sql: true
+    properties:
+      hibernate:
+        format_sql: true
+        use_sql_comments: true
+        jdbc:
+          batch_size: 20
+        order_inserts: true
+        order_updates: true
+
+  # Redis configuration (Docker)
+  redis:
+    host: localhost
+    port: 6380
+    password:
+    database: 0
+    timeout: 3000ms
+    lettuce:
+      pool:
+        max-active: 8
+        max-idle: 8
+        min-idle: 0
+        max-wait: -1ms
+
+  # Jackson configuration
+  jackson:
+    serialization:
+      write-dates-as-timestamps: false
+    time-zone: Asia/Shanghai
+
+# Application configuration
+app:
+  # JWT configuration
+  jwt:
+    secret: your-secret-key-change-in-production-at-least-32-characters
+    expiration: 86400000 # 24 hours in milliseconds
+    refresh-expiration: 604800000 # 7 days in milliseconds
+
+  # Admin JWT configuration
+  admin:
+    jwt:
+      secret: admin-secret-key-change-in-production-at-least-32-characters-long
+      expiration: 28800000 # 8 hours in milliseconds
+
+  # SMS configuration (simulated)
+  sms:
+    enabled: true
+    simulate: true
+
+  # Payment configuration (simulated)
+  payment:
+    wechat:
+      simulate: true
+    alipay:
+      simulate: true
+
+  # Object storage configuration (simulated)
+  oss:
+    endpoint: https://oss-cn-hangzhou.aliyuncs.com
+    bucket: ai-workflow-dev
+    access-key-id: simulated
+    access-key-secret: simulated
+    simulate: true
+
+  # Coze API integration
+  coze:
+    base-url: https://api.coze.com
+    api-key: simulated-api-key
+    simulate: true
+
+  # Security configuration
+  security:
+    cors:
+      allowed-origins: "http://localhost:3000,http://localhost:8081"
+      allowed-methods: "GET,POST,PUT,DELETE,OPTIONS"
+      allowed-headers: "*"
+      allow-credentials: true
+
+# Logging configuration
+logging:
+  level:
+    com.aiflow.workflow: DEBUG
+    org.springframework.security: INFO
+    org.hibernate.SQL: DEBUG
+    org.hibernate.type.descriptor.sql.BasicBinder: TRACE
+  file:
+    name: logs/application.log
+  pattern:
+    console: "%d{yyyy-MM-dd HH:mm:ss} - %msg%n"
+    file: "%d{yyyy-MM-dd HH:mm:ss} [%thread] %-5level %logger{36} - %msg%n"
+
+# Springdoc OpenAPI configuration
+springdoc:
+  api-docs:
+    path: /v3/api-docs
+  swagger-ui:
+    path: /swagger-ui.html
+    enabled: true
+  default-produces-media-type: application/json

@@ -1,0 +1,422 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>个人中心 - AI工作流平台</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Roboto', 'Noto Sans CJK', sans-serif;
+        }
+        
+        :root {
+            --bg-primary: #121212;
+            --bg-card: #1E1E1E;
+            --bg-surface: #252525;
+            --divider: #333333;
+            
+            --primary-blue: #3366CC;
+            --primary-light: #4D8BF5;
+            --primary-dark: #1A4DA3;
+            
+            --text-primary: #FFFFFF;
+            --text-secondary: #B0B0B0;
+            --text-disabled: #666666;
+            --text-error: #FF4D4F;
+            
+            --success: #52C41A;
+            --warning: #FAAD14;
+            --error: #FF4D4F;
+            --info: #1890FF;
+            
+            --radius-small: 4px;
+            --radius-medium: 8px;
+            --radius-large: 12px;
+            --radius-full: 50%;
+            
+            --spacing-xs: 4px;
+            --spacing-s: 8px;
+            --spacing-m: 16px;
+            --spacing-l: 24px;
+            --spacing-xl: 32px;
+        }
+        
+        body {
+            background-color: var(--bg-primary);
+            color: var(--text-primary);
+            line-height: 1.5;
+            padding-bottom: 72px;
+        }
+        
+        .container {
+            max-width: 480px;
+            margin: 0 auto;
+            padding: var(--spacing-m);
+        }
+        
+        /* 顶部应用栏 */
+        .app-bar {
+            background-color: var(--bg-primary);
+            padding: var(--spacing-m);
+            border-bottom: 1px solid var(--divider);
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            position: sticky;
+            top: 0;
+            z-index: 100;
+        }
+        
+        .app-bar h1 {
+            font-size: 18px;
+            font-weight: bold;
+        }
+        
+        /* 用户信息卡片 */
+        .user-card {
+            background-color: var(--bg-card);
+            border-radius: var(--radius-large);
+            padding: var(--spacing-m);
+            margin-bottom: var(--spacing-l);
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.3);
+            text-align: center;
+        }
+        
+        .user-avatar {
+            width: 80px;
+            height: 80px;
+            background: linear-gradient(135deg, var(--primary-blue), var(--primary-light));
+            border-radius: var(--radius-full);
+            margin: 0 auto var(--spacing-m);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 36px;
+            color: white;
+        }
+        
+        .user-name {
+            font-size: 20px;
+            font-weight: bold;
+            margin-bottom: var(--spacing-xs);
+        }
+        
+        .user-id {
+            font-size: 12px;
+            color: var(--text-secondary);
+            margin-bottom: var(--spacing-m);
+        }
+        
+        /* 资源点卡片 */
+        .points-card {
+            background: linear-gradient(135deg, var(--primary-dark), var(--primary-blue));
+            border-radius: var(--radius-large);
+            padding: var(--spacing-m);
+            margin-bottom: var(--spacing-l);
+            color: white;
+        }
+        
+        .points-title {
+            font-size: 14px;
+            margin-bottom: var(--spacing-s);
+            opacity: 0.9;
+        }
+        
+        .points-amount {
+            font-size: 36px;
+            font-weight: bold;
+            margin-bottom: var(--spacing-s);
+        }
+        
+        .points-actions {
+            display: flex;
+            gap: var(--spacing-s);
+        }
+        
+        /* 菜单列表 */
+        .menu-list {
+            background-color: var(--bg-card);
+            border-radius: var(--radius-large);
+            overflow: hidden;
+            margin-bottom: var(--spacing-l);
+        }
+        
+        .menu-item {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: var(--spacing-m);
+            border-bottom: 1px solid var(--divider);
+            text-decoration: none;
+            color: var(--text-primary);
+            transition: background-color 0.2s;
+        }
+        
+        .menu-item:last-child {
+            border-bottom: none;
+        }
+        
+        .menu-item:hover {
+            background-color: var(--bg-surface);
+        }
+        
+        .menu-item .left {
+            display: flex;
+            align-items: center;
+            gap: var(--spacing-s);
+        }
+        
+        .menu-item .material-icons {
+            color: var(--text-secondary);
+            font-size: 20px;
+        }
+        
+        .menu-item .title {
+            font-size: 14px;
+            font-weight: bold;
+        }
+        
+        .menu-item .right {
+            color: var(--text-secondary);
+            font-size: 12px;
+        }
+        
+        /* 按钮 */
+        .btn {
+            display: inline-block;
+            padding: 12px 24px;
+            border-radius: var(--radius-medium);
+            font-weight: bold;
+            text-align: center;
+            cursor: pointer;
+            border: none;
+            text-decoration: none;
+            transition: background-color 0.2s;
+            font-size: 14px;
+        }
+        
+        .btn-primary {
+            background-color: var(--primary-blue);
+            color: white;
+        }
+        
+        .btn-primary:hover {
+            background-color: var(--primary-light);
+        }
+        
+        .btn-secondary {
+            background-color: transparent;
+            color: white;
+            border: 1px solid rgba(255, 255, 255, 0.3);
+        }
+        
+        .btn-secondary:hover {
+            background-color: rgba(255, 255, 255, 0.1);
+        }
+        
+        .btn-block {
+            display: block;
+            width: 100%;
+        }
+        
+        /* 底部导航栏 */
+        .bottom-nav {
+            position: fixed;
+            bottom: 0;
+            left: 0;
+            right: 0;
+            background-color: var(--bg-primary);
+            border-top: 1px solid var(--divider);
+            display: flex;
+            justify-content: space-around;
+            padding: var(--spacing-s) 0;
+            z-index: 100;
+        }
+        
+        .nav-item {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            color: var(--text-secondary);
+            text-decoration: none;
+            padding: var(--spacing-s) var(--spacing-m);
+            border-radius: var(--radius-medium);
+            transition: all 0.2s;
+            font-size: 12px;
+        }
+        
+        .nav-item.active {
+            color: var(--primary-blue);
+        }
+        
+        .nav-item i {
+            font-size: 20px;
+            margin-bottom: var(--spacing-xs);
+        }
+        
+        .material-icons {
+            font-family: 'Material Icons';
+            font-weight: normal;
+            font-style: normal;
+            font-size: 24px;
+            line-height: 1;
+            letter-spacing: normal;
+            text-transform: none;
+            display: inline-block;
+            white-space: nowrap;
+            word-wrap: normal;
+            direction: ltr;
+            -webkit-font-feature-settings: 'liga';
+            -webkit-font-smoothing: antialiased;
+        }
+    </style>
+</head>
+<body>
+    <!-- 顶部应用栏 -->
+    <div class="app-bar">
+        <h1>个人中心</h1>
+        <button class="icon-button" onclick="location.href='settings.html'" style="background: none; border: none; color: var(--text-secondary); cursor: pointer;">
+            <span class="material-icons">settings</span>
+        </button>
+    </div>
+    
+    <div class="container">
+        <!-- 用户信息 -->
+        <div class="user-card">
+            <div class="user-avatar">
+                <span class="material-icons">person</span>
+            </div>
+            <div class="user-name">张小明</div>
+            <div class="user-id">用户ID: user_20260201</div>
+            <button class="btn btn-secondary" onclick="location.href='edit-profile.html'">编辑资料</button>
+        </div>
+        
+        <!-- 资源点 -->
+        <div class="points-card">
+            <div class="points-title">可用资源点</div>
+            <div class="points-amount">12,500 点</div>
+            <div class="points-actions">
+                <button class="btn btn-primary" style="flex: 1;" onclick="location.href='recharge.html'">充值</button>
+                <button class="btn btn-secondary" style="flex: 1;" onclick="location.href='points-history.html'">消费记录</button>
+            </div>
+        </div>
+        
+        <!-- 功能菜单 -->
+        <div class="menu-list">
+            <a href="my-collection.html" class="menu-item">
+                <div class="left">
+                    <span class="material-icons">star</span>
+                    <span class="title">我的收藏</span>
+                </div>
+                <div class="right">12个工作流</div>
+            </a>
+            
+            <a href="task-center.html" class="menu-item">
+                <div class="left">
+                    <span class="material-icons">assignment</span>
+                    <span class="title">任务中心</span>
+                </div>
+                <div class="right">3个进行中</div>
+            </a>
+            
+            <a href="points-history.html" class="menu-item">
+                <div class="left">
+                    <span class="material-icons">history</span>
+                    <span class="title">消费记录</span>
+                </div>
+                <div class="right">查看详情</div>
+            </a>
+            
+            <a href="settings.html" class="menu-item">
+                <div class="left">
+                    <span class="material-icons">settings</span>
+                    <span class="title">设置</span>
+                </div>
+                <div class="right">通知、主题等</div>
+            </a>
+            
+            <a href="help-center.html" class="menu-item">
+                <div class="left">
+                    <span class="material-icons">help</span>
+                    <span class="title">帮助中心</span>
+                </div>
+                <div class="right">常见问题</div>
+            </a>
+            
+            <a href="about.html" class="menu-item">
+                <div class="left">
+                    <span class="material-icons">info</span>
+                    <span class="title">关于我们</span>
+                </div>
+                <div class="right">版本 1.0.0</div>
+            </a>
+        </div>
+        
+        <!-- 操作按钮 -->
+        <button class="btn btn-secondary btn-block" onclick="logout()">退出登录</button>
+    </div>
+    
+    <!-- 底部导航栏 -->
+    <div class="bottom-nav">
+        <a href="index.html" class="nav-item">
+            <span class="material-icons">home</span>
+            首页
+        </a>
+        <a href="categories.html" class="nav-item">
+            <span class="material-icons">explore</span>
+            发现
+        </a>
+        <a href="task-center.html" class="nav-item">
+            <span class="material-icons">assignment</span>
+            任务
+        </a>
+        <a href="profile.html" class="nav-item active">
+            <span class="material-icons">person</span>
+            我的
+        </a>
+    </div>
+    
+    <script>
+        // 模拟用户数据
+        const userData = {
+            name: '张小明',
+            userId: 'user_20260201',
+            points: 12500,
+            collections: 12,
+            processingTasks: 3
+        };
+        
+        // 更新页面数据
+        function updateUserData() {
+            document.querySelector('.user-name').textContent = userData.name;
+            document.querySelector('.user-id').textContent = '用户ID: ' + userData.userId;
+            document.querySelector('.points-amount').textContent = userData.points.toLocaleString() + ' 点';
+            document.querySelector('.menu-list a[href="my-collection.html"] .right').textContent = userData.collections + '个工作流';
+            document.querySelector('.menu-list a[href="task-center.html"] .right').textContent = userData.processingTasks + '个进行中';
+        }
+        
+        function logout() {
+            if (confirm('确定要退出登录吗？')) {
+                alert('已退出登录，跳转到登录页');
+                location.href = 'login.html';
+            }
+        }
+        
+        // 初始化
+        document.addEventListener('DOMContentLoaded', function() {
+            updateUserData();
+            
+            // 模拟点击菜单项
+            document.querySelectorAll('.menu-item').forEach(item => {
+                item.addEventListener('click', function(e) {
+                    // 实际应用中会跳转，这里只是模拟
+                    console.log('跳转到: ' + this.getAttribute('href'));
+                });
+            });
+        });
+    </script>
+</body>
+</html>

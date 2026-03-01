@@ -1,0 +1,423 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>工作流详情 - AI工作流平台</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Roboto', 'Noto Sans CJK', sans-serif;
+        }
+        
+        :root {
+            --bg-primary: #121212;
+            --bg-card: #1E1E1E;
+            --bg-surface: #252525;
+            --divider: #333333;
+            
+            --primary-blue: #3366CC;
+            --primary-light: #4D8BF5;
+            --primary-dark: #1A4DA3;
+            
+            --text-primary: #FFFFFF;
+            --text-secondary: #B0B0B0;
+            --text-disabled: #666666;
+            --text-error: #FF4D4F;
+            
+            --success: #52C41A;
+            --warning: #FAAD14;
+            --error: #FF4D4F;
+            --info: #1890FF;
+            
+            --radius-small: 4px;
+            --radius-medium: 8px;
+            --radius-large: 12px;
+            --radius-full: 50%;
+            
+            --spacing-xs: 4px;
+            --spacing-s: 8px;
+            --spacing-m: 16px;
+            --spacing-l: 24px;
+            --spacing-xl: 32px;
+        }
+        
+        body {
+            background-color: var(--bg-primary);
+            color: var(--text-primary);
+            line-height: 1.5;
+            padding-bottom: 72px;
+        }
+        
+        .container {
+            max-width: 480px;
+            margin: 0 auto;
+            padding: var(--spacing-m);
+        }
+        
+        /* 返回按钮 */
+        .back-button {
+            position: fixed;
+            top: var(--spacing-m);
+            left: var(--spacing-m);
+            background-color: rgba(0, 0, 0, 0.6);
+            color: white;
+            border: none;
+            border-radius: var(--radius-full);
+            width: 40px;
+            height: 40px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            z-index: 101;
+            backdrop-filter: blur(10px);
+        }
+        
+        .back-button:hover {
+            background-color: rgba(255, 255, 255, 0.2);
+        }
+        
+        /* 工作流封面 */
+        .workflow-hero {
+            background: linear-gradient(135deg, var(--primary-blue), var(--primary-light));
+            height: 200px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin: calc(-1 * var(--spacing-m)) calc(-1 * var(--spacing-m)) var(--spacing-m);
+            position: relative;
+            overflow: hidden;
+        }
+        
+        .workflow-hero-icon {
+            font-size: 80px;
+            color: white;
+            opacity: 0.9;
+        }
+        
+        .workflow-header {
+            margin-bottom: var(--spacing-l);
+        }
+        
+        .workflow-title {
+            font-size: 24px;
+            font-weight: bold;
+            margin-bottom: var(--spacing-s);
+        }
+        
+        .workflow-meta {
+            display: flex;
+            gap: var(--spacing-m);
+            font-size: 14px;
+            color: var(--text-secondary);
+            margin-bottom: var(--spacing-m);
+        }
+        
+        .workflow-rating {
+            color: var(--warning);
+        }
+        
+        /* 卡片 */
+        .card {
+            background-color: var(--bg-card);
+            border-radius: var(--radius-large);
+            padding: var(--spacing-m);
+            margin-bottom: var(--spacing-m);
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.3);
+        }
+        
+        .card-title {
+            font-size: 16px;
+            font-weight: bold;
+            margin-bottom: var(--spacing-s);
+            color: var(--text-primary);
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+        }
+        
+        /* 按钮 */
+        .btn {
+            display: inline-block;
+            padding: 12px 24px;
+            border-radius: var(--radius-medium);
+            font-weight: bold;
+            text-align: center;
+            cursor: pointer;
+            border: none;
+            text-decoration: none;
+            transition: background-color 0.2s;
+            font-size: 14px;
+        }
+        
+        .btn-primary {
+            background-color: var(--primary-blue);
+            color: white;
+        }
+        
+        .btn-primary:hover {
+            background-color: var(--primary-light);
+        }
+        
+        .btn-block {
+            display: block;
+            width: 100%;
+            margin-top: var(--spacing-m);
+        }
+        
+        /* 参数预览 */
+        .param-list {
+            list-style: none;
+        }
+        
+        .param-item {
+            display: flex;
+            justify-content: space-between;
+            padding: var(--spacing-s) 0;
+            border-bottom: 1px solid var(--divider);
+        }
+        
+        .param-item:last-child {
+            border-bottom: none;
+        }
+        
+        .param-name {
+            color: var(--text-primary);
+            font-size: 14px;
+        }
+        
+        .param-type {
+            color: var(--text-secondary);
+            font-size: 12px;
+            background-color: rgba(51, 102, 204, 0.2);
+            padding: 2px 8px;
+            border-radius: var(--radius-small);
+        }
+        
+        /* 底部操作栏 */
+        .action-bar {
+            position: fixed;
+            bottom: 72px; /* 在底部导航上方 */
+            left: 0;
+            right: 0;
+            background-color: var(--bg-primary);
+            padding: var(--spacing-m);
+            border-top: 1px solid var(--divider);
+            display: flex;
+            gap: var(--spacing-m);
+            z-index: 99;
+        }
+        
+        .action-bar .btn {
+            flex: 1;
+        }
+        
+        /* 底部导航栏 */
+        .bottom-nav {
+            position: fixed;
+            bottom: 0;
+            left: 0;
+            right: 0;
+            background-color: var(--bg-primary);
+            border-top: 1px solid var(--divider);
+            display: flex;
+            justify-content: space-around;
+            padding: var(--spacing-s) 0;
+            z-index: 100;
+        }
+        
+        .nav-item {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            color: var(--text-secondary);
+            text-decoration: none;
+            padding: var(--spacing-s) var(--spacing-m);
+            border-radius: var(--radius-medium);
+            transition: all 0.2s;
+            font-size: 12px;
+        }
+        
+        .nav-item.active {
+            color: var(--primary-blue);
+        }
+        
+        .nav-item i {
+            font-size: 20px;
+            margin-bottom: var(--spacing-xs);
+        }
+        
+        .material-icons {
+            font-family: 'Material Icons';
+            font-weight: normal;
+            font-style: normal;
+            font-size: 24px;
+            line-height: 1;
+            letter-spacing: normal;
+            text-transform: none;
+            display: inline-block;
+            white-space: nowrap;
+            word-wrap: normal;
+            direction: ltr;
+            -webkit-font-feature-settings: 'liga';
+            -webkit-font-smoothing: antialiased;
+        }
+    </style>
+</head>
+<body>
+    <!-- 返回按钮 -->
+    <button class="back-button" onclick="location.href='index.html'">
+        <span class="material-icons">arrow_back</span>
+    </button>
+    
+    <!-- 工作流封面 -->
+    <div class="workflow-hero">
+        <span class="material-icons workflow-hero-icon">movie</span>
+    </div>
+    
+    <div class="container">
+        <!-- 工作流头部信息 -->
+        <div class="workflow-header">
+            <h1 class="workflow-title">人物视频模仿</h1>
+            <div class="workflow-meta">
+                <span>作者: AI实验室</span>
+                <span>更新: 2026-02-28</span>
+                <span class="workflow-rating">★ 4.8 (2.3k)</span>
+            </div>
+            <div class="card">
+                <p style="font-size: 14px; line-height: 1.6; color: var(--text-secondary);">
+                    使用一张人物照片生成自然说话的视频，支持多种语言、表情和手势。适用于虚拟主播、数字人制作、个性化视频消息等场景。
+                </p>
+            </div>
+        </div>
+        
+        <!-- 参数预览 -->
+        <div class="card">
+            <h2 class="card-title">需要输入的参数</h2>
+            <ul class="param-list">
+                <li class="param-item">
+                    <span class="param-name">人物照片</span>
+                    <span class="param-type">图片上传</span>
+                </li>
+                <li class="param-item">
+                    <span class="param-name">说话文本</span>
+                    <span class="param-type">多行文本</span>
+                </li>
+                <li class="param-item">
+                    <span class="param-name">语言选择</span>
+                    <span class="param-type">下拉选择</span>
+                </li>
+                <li class="param-item">
+                    <span class="param-name">语速调整</span>
+                    <span class="param-type">滑块</span>
+                </li>
+                <li class="param-item">
+                    <span class="param-name">表情强度</span>
+                    <span class="param-type">滑块</span>
+                </li>
+                <li class="param-item">
+                    <span class="param-name">视频清晰度</span>
+                    <span class="param-type">单选按钮</span>
+                </li>
+                <li class="param-item">
+                    <span class="param-name">视频比例</span>
+                    <span class="param-type">单选按钮</span>
+                </li>
+                <li class="param-item">
+                    <span class="param-name">背景音乐</span>
+                    <span class="param-type">开关</span>
+                </li>
+            </ul>
+        </div>
+        
+        <!-- 示例输出 -->
+        <div class="card">
+            <h2 class="card-title">
+                示例输出
+                <span style="font-size: 12px; color: var(--text-secondary); font-weight: normal;">(点击播放)</span>
+            </h2>
+            <div style="background-color: var(--bg-surface); border-radius: var(--radius-medium); padding: var(--spacing-m); text-align: center;">
+                <div style="width: 100%; height: 150px; background-color: var(--divider); border-radius: var(--radius-medium); display: flex; align-items: center; justify-content: center; color: var(--text-secondary);">
+                    <span class="material-icons" style="font-size: 48px;">play_circle</span>
+                </div>
+                <p style="margin-top: var(--spacing-s); font-size: 13px; color: var(--text-secondary);">
+                    示例视频: 生成的人物说话视频，时长15秒，1080p分辨率
+                </p>
+            </div>
+        </div>
+        
+        <!-- 资源点消耗 -->
+        <div class="card">
+            <h2 class="card-title">预计资源点消耗</h2>
+            <div style="display: flex; justify-content: space-between; align-items: center;">
+                <div>
+                    <div style="font-size: 32px; font-weight: bold; color: var(--warning);">500 点</div>
+                    <div style="font-size: 12px; color: var(--text-secondary);">基础消耗 + 参数加成</div>
+                </div>
+                <div style="font-size: 14px; color: var(--text-secondary);">
+                    您当前余额: <span style="color: var(--success); font-weight: bold;">12,500 点</span>
+                </div>
+            </div>
+        </div>
+        
+        <!-- 操作按钮 -->
+        <button class="btn btn-primary btn-block" onclick="location.href='parameter-input.html'">
+            立即使用
+        </button>
+    </div>
+    
+    <!-- 底部操作栏 -->
+    <div class="action-bar">
+        <button class="btn btn-secondary" onclick="alert('已收藏')">
+            <span class="material-icons" style="font-size: 18px; margin-right: 4px;">star_border</span>
+            收藏
+        </button>
+        <button class="btn btn-secondary" onclick="alert('已分享')">
+            <span class="material-icons" style="font-size: 18px; margin-right: 4px;">share</span>
+            分享
+        </button>
+    </div>
+    
+    <!-- 底部导航栏 -->
+    <div class="bottom-nav">
+        <a href="index.html" class="nav-item">
+            <span class="material-icons">home</span>
+            首页
+        </a>
+        <a href="categories.html" class="nav-item">
+            <span class="material-icons">explore</span>
+            发现
+        </a>
+        <a href="task-center.html" class="nav-item active">
+            <span class="material-icons">assignment</span>
+            任务
+        </a>
+        <a href="profile.html" class="nav-item">
+            <span class="material-icons">person</span>
+            我的
+        </a>
+    </div>
+    
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            // 示例视频点击播放
+            const exampleVideo = document.querySelector('.workflow-hero');
+            exampleVideo.addEventListener('click', function() {
+                alert('播放示例视频（模拟）');
+            });
+            
+            // 参数项点击查看详情
+            const paramItems = document.querySelectorAll('.param-item');
+            paramItems.forEach(item => {
+                item.addEventListener('click', function() {
+                    const paramName = this.querySelector('.param-name').textContent;
+                    alert('参数: ' + paramName + '\n类型: ' + this.querySelector('.param-type').textContent);
+                });
+            });
+        });
+    </script>
+</body>
+</html>
