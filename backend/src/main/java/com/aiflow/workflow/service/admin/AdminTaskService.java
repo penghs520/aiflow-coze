@@ -152,12 +152,27 @@ public class AdminTaskService {
     @Transactional
     public Task executeWorkflow(String workflowId, Long adminUserId, Map<String, Object> parameters) {
         // 验证工作流存在
-        workflowRepository.findById(workflowId)
+        Workflow workflow = workflowRepository.findById(workflowId)
                 .orElseThrow(() -> new RuntimeException("工作流不存在"));
 
         // 查找管理员用户
         AdminUser adminUser = adminUserRepository.findById(adminUserId)
                 .orElseThrow(() -> new RuntimeException("管理员用户不存在"));
+
+        // 自动填充 mihe_key 参数（如果参数中存在 mihe_key 且为空字符串）
+        if (parameters.containsKey("mihe_key")) {
+            Object miheKeyValue = parameters.get("mihe_key");
+            // 如果 mihe_key 为空字符串或 null，则从配置中填充
+            if (miheKeyValue == null || (miheKeyValue instanceof String && ((String) miheKeyValue).isEmpty())) {
+                String miheKey = cozeService.getMiheKey();
+                if (miheKey != null && !miheKey.isEmpty()) {
+                    parameters.put("mihe_key", miheKey);
+                    log.info("自动填充 mihe_key 参数到工作流执行: workflowId={}", workflowId);
+                } else {
+                    log.warn("工作流需要 mihe_key 参数，但后端未配置 COZE_MIHE_KEY: workflowId={}", workflowId);
+                }
+            }
+        }
 
         // 创建任务
         Task task = Task.builder()

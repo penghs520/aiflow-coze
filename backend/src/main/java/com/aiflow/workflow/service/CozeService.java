@@ -28,6 +28,9 @@ public class CozeService {
     @Value("${app.coze.simulate:true}")
     private boolean simulate;
 
+    @Value("${app.coze.mihe-key:}")
+    private String miheKey;
+
     private final OkHttpClient httpClient;
     private final ObjectMapper objectMapper;
 
@@ -38,6 +41,13 @@ public class CozeService {
                 .writeTimeout(30, TimeUnit.SECONDS)
                 .build();
         this.objectMapper = new ObjectMapper();
+    }
+
+    /**
+     * 获取 Mihe Key
+     */
+    public String getMiheKey() {
+        return miheKey;
     }
 
     /**

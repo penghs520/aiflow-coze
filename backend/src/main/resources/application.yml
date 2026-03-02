@@ -87,19 +87,21 @@ app:
     alipay:
       simulate: true
 
-  # Object storage configuration (simulated)
+  # Object storage configuration
   oss:
-    endpoint: https://oss-cn-hangzhou.aliyuncs.com
-    bucket: ai-workflow-dev
-    access-key-id: simulated
-    access-key-secret: simulated
-    simulate: true
+    endpoint: ${APP_OSS_ENDPOINT:https://oss-cn-hangzhou.aliyuncs.com}
+    bucket: ${APP_OSS_BUCKET:ai-workflow-dev}
+    access-key-id: ${APP_OSS_ACCESS_KEY_ID:simulated}
+    access-key-secret: ${APP_OSS_ACCESS_KEY_SECRET:simulated}
+    simulate: ${APP_OSS_SIMULATE:true}
+    url-prefix: ${APP_OSS_URL_PREFIX:}
 
   # Coze API integration
   coze:
-    base-url: https://api.coze.cn
-    api-key: pat_skZYTGEKi3Ii7eQkzg3XPxrsMrjyorkFNlPYcPtOJIA1EVehPtFfG6GVfz4g6402
-    simulate: false
+    base-url: ${COZE_BASE_URL:https://api.coze.cn}
+    api-key: ${COZE_API_KEY:pat_skZYTGEKi3Ii7eQkzg3XPxrsMrjyorkFNlPYcPtOJIA1EVehPtFfG6GVfz4g6402}
+    simulate: ${COZE_SIMULATE:false}
+    mihe-key: ${COZE_MIHE_KEY:}
 
 # File upload configuration
   upload:

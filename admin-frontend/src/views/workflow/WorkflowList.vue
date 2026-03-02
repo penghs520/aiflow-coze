@@ -106,6 +106,7 @@
             :label="param.key"
             :required="param.required"
             :prop="'parameters.' + param.key"
+            v-show="param.key !== 'mihe_key'"
           >
             <!-- 文本输入 -->
             <el-input
@@ -619,7 +620,10 @@ const handleExecute = async (row) => {
     // 根据参数定义初始化参数值
     if (executeForm.value.parameterDefinition && executeForm.value.parameterDefinition.length > 0) {
       executeForm.value.parameterDefinition.forEach(param => {
-        if (param.default !== undefined && param.default !== null) {
+        // mihe_key 参数初始化为空字符串，由后端自动填充
+        if (param.key === 'mihe_key') {
+          executeForm.value.parameters[param.key] = ''
+        } else if (param.default !== undefined && param.default !== null) {
           executeForm.value.parameters[param.key] = param.default
         } else if (param.type === 'boolean') {
           executeForm.value.parameters[param.key] = false
@@ -646,10 +650,15 @@ const handleParamFileSuccess = (paramKey, response) => {
 
 // 提交执行
 const handleExecuteSubmit = async () => {
-  // 验证必填参数
+  // 验证必填参数（排除 mihe_key，因为它由后端自动填充）
   const missingParams = []
   if (executeForm.value.parameterDefinition) {
     executeForm.value.parameterDefinition.forEach(param => {
+      // 跳过 mihe_key 的验证，因为它由后端自动填充
+      if (param.key === 'mihe_key') {
+        return
+      }
+
       if (param.required) {
         const value = executeForm.value.parameters[param.key]
         if (value === undefined || value === null || value === '' ||
@@ -667,6 +676,7 @@ const handleExecuteSubmit = async () => {
 
   executeSubmitting.value = true
   try {
+    // 提交参数，mihe_key 会作为空字符串提交，由后端自动填充
     const result = await executeWorkflow(
       executeForm.value.workflowId,
       executeForm.value.parameters

@@ -1,5 +1,6 @@
 package com.aiflow.workflow.service;
 
+import com.aiflow.workflow.config.OssConfig;
 import com.aiflow.workflow.config.UploadConfig;
 import jakarta.annotation.PostConstruct;
 import lombok.RequiredArgsConstructor;
@@ -19,6 +20,8 @@ import java.util.UUID;
 public class FileUploadService {
 
     private final UploadConfig uploadConfig;
+    private final OssConfig ossConfig;
+    private final OssService ossService;
 
     @PostConstruct
     public void init() {
@@ -51,7 +54,13 @@ public class FileUploadService {
         if (contentType == null || !contentType.startsWith("image/")) {
             throw new RuntimeException("只支持上传图片文件");
         }
-        return saveFile(file, "images");
+
+        // 使用 OSS 或本地存储
+        if (!ossConfig.getSimulate()) {
+            return ossService.uploadFile(file, "images");
+        } else {
+            return saveFile(file, "images");
+        }
     }
 
     /**
@@ -63,7 +72,13 @@ public class FileUploadService {
         if (contentType == null || !contentType.startsWith("video/")) {
             throw new RuntimeException("只支持上传视频文件");
         }
-        return saveFile(file, "videos");
+
+        // 使用 OSS 或本地存储
+        if (!ossConfig.getSimulate()) {
+            return ossService.uploadFile(file, "videos");
+        } else {
+            return saveFile(file, "videos");
+        }
     }
 
     /**

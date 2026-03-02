@@ -24,3 +24,4 @@ logs/
 # Application
 application-local.yml
 application-dev.yml
+.env
