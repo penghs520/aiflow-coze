@@ -18,22 +18,22 @@ public interface TaskRepository extends JpaRepository<Task, String> {
     /**
      * 根据用户ID查找任务
      */
-    List<Task> findByUser_Id(Long userId);
+    List<Task> findByUserId(Long userId);
 
     /**
      * 根据用户ID和状态查找任务
      */
-    List<Task> findByUser_IdAndStatus(Long userId, Integer status);
+    List<Task> findByUserIdAndStatus(Long userId, Integer status);
 
     /**
      * 根据用户ID分页查找任务
      */
-    Page<Task> findByUser_Id(Long userId, Pageable pageable);
+    Page<Task> findByUserId(Long userId, Pageable pageable);
 
     /**
      * 根据用户ID和状态分页查找任务
      */
-    Page<Task> findByUser_IdAndStatus(Long userId, Integer status, Pageable pageable);
+    Page<Task> findByUserIdAndStatus(Long userId, Integer status, Pageable pageable);
 
     /**
      * 根据工作流ID查找任务
@@ -63,12 +63,12 @@ public interface TaskRepository extends JpaRepository<Task, String> {
     /**
      * 统计用户的任务数量
      */
-    long countByUser_Id(Long userId);
+    long countByUserId(Long userId);
 
     /**
      * 统计用户指定状态的任务数量
      */
-    long countByUser_IdAndStatus(Long userId, Integer status);
+    long countByUserIdAndStatus(Long userId, Integer status);
 
     /**
      * 根据扣子任务ID查找任务

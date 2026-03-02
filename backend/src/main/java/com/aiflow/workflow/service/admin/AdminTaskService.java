@@ -1,11 +1,11 @@
 package com.aiflow.workflow.service.admin;
 
 import com.aiflow.workflow.entity.Task;
-import com.aiflow.workflow.entity.User;
 import com.aiflow.workflow.entity.Workflow;
+import com.aiflow.workflow.entity.admin.AdminUser;
 import com.aiflow.workflow.repository.TaskRepository;
-import com.aiflow.workflow.repository.UserRepository;
 import com.aiflow.workflow.repository.WorkflowRepository;
+import com.aiflow.workflow.repository.admin.AdminUserRepository;
 import com.aiflow.workflow.service.CozeService;
 import com.aiflow.workflow.util.IdGenerator;
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -30,7 +30,7 @@ public class AdminTaskService {
 
     private final TaskRepository taskRepository;
     private final WorkflowRepository workflowRepository;
-    private final UserRepository userRepository;
+    private final AdminUserRepository adminUserRepository;
     private final CozeService cozeService;
     private final IdGenerator idGenerator;
     private final ObjectMapper objectMapper;
@@ -53,7 +53,7 @@ public class AdminTaskService {
      * 根据用户ID查询任务
      */
     public Page<Task> listByUser(Long userId, Pageable pageable) {
-        return taskRepository.findByUser_Id(userId, pageable);
+        return taskRepository.findByUserId(userId, pageable);
     }
 
     /**
@@ -145,25 +145,25 @@ public class AdminTaskService {
      * 管理员执行工作流（内测使用，不检查资源点）
      *
      * @param workflowId 工作流ID
-     * @param userId     执行用户ID（用于记录）
+     * @param adminUserId 执行管理员ID（用于记录）
      * @param parameters 任务参数
      * @return 创建的任务
      */
     @Transactional
-    public Task executeWorkflow(String workflowId, Long userId, Map<String, Object> parameters) {
-        // 查找工作流
-        Workflow workflow = workflowRepository.findById(workflowId)
+    public Task executeWorkflow(String workflowId, Long adminUserId, Map<String, Object> parameters) {
+        // 验证工作流存在
+        workflowRepository.findById(workflowId)
                 .orElseThrow(() -> new RuntimeException("工作流不存在"));
 
-        // 查找用户
-        User user = userRepository.findById(userId)
-                .orElseThrow(() -> new RuntimeException("用户不存在"));
+        // 查找管理员用户
+        AdminUser adminUser = adminUserRepository.findById(adminUserId)
+                .orElseThrow(() -> new RuntimeException("管理员用户不存在"));
 
         // 创建任务
         Task task = Task.builder()
                 .id(String.valueOf(idGenerator.nextId()))
-                .workflow(workflow)
-                .user(user)
+                .workflowId(workflowId)
+                .userId(adminUser.getId())
                 .status(Task.STATUS_PENDING_SUBMISSION)
                 .progress(0)
                 .estimatedPoints(0) // 内测任务不消耗资源点
@@ -181,7 +181,7 @@ public class AdminTaskService {
         // 提交到扣子平台
         submitTaskToCoze(task);
 
-        log.info("管理员执行工作流: workflowId={}, taskId={}", workflowId, task.getId());
+        log.info("管理员执行工作流: workflowId={}, taskId={}, adminUserId={}", workflowId, task.getId(), adminUserId);
 
         return task;
     }
@@ -195,9 +195,13 @@ public class AdminTaskService {
             // 解析参数
             Map<String, Object> parameters = objectMapper.readValue(task.getParameters(), Map.class);
 
+            // 查询工作流获取cozeWorkflowId
+            Workflow workflow = workflowRepository.findById(task.getWorkflowId())
+                    .orElseThrow(() -> new RuntimeException("工作流不存在"));
+
             // 调用扣子API
             CozeService.CozeExecuteResponse response = cozeService.executeWorkflow(
-                    task.getWorkflow().getCozeWorkflowId(),
+                    workflow.getCozeWorkflowId(),
                     parameters
             );
 

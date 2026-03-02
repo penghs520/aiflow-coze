@@ -32,13 +32,11 @@ public class Task {
     @Column(name = "id", nullable = false, length = 32)
     private String id;
 
-    @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "workflow_id", nullable = false, foreignKey = @ForeignKey(ConstraintMode.NO_CONSTRAINT))
-    private Workflow workflow;
+    @Column(name = "workflow_id", nullable = false, length = 32)
+    private String workflowId;
 
-    @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "user_id", nullable = false, foreignKey = @ForeignKey(ConstraintMode.NO_CONSTRAINT))
-    private User user;
+    @Column(name = "user_id", nullable = false)
+    private Long userId;
 
     /**
      * 状态：0-待提交，1-排队中，2-处理中，3-已完成，4-失败，5-已取消

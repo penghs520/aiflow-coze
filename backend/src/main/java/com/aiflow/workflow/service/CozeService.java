@@ -64,12 +64,21 @@ public class CozeService {
                     .build();
 
             try (Response response = httpClient.newCall(request).execute()) {
-                if (!response.isSuccessful()) {
-                    throw new IOException("请求失败: " + response);
-                }
-
                 String responseBody = response.body().string();
                 JsonNode jsonNode = objectMapper.readTree(responseBody);
+
+                // 检查业务错误码
+                if (jsonNode.has("code") && jsonNode.get("code").asInt() != 0) {
+                    String msg = jsonNode.has("msg") ? jsonNode.get("msg").asText() : "未知错误";
+                    log.error("Coze执行工作流失败: code={}, msg={}", jsonNode.get("code").asInt(), msg);
+                    throw new RuntimeException("Coze API错误: " + msg);
+                }
+
+                // 检查 execute_id 是否存在
+                if (!jsonNode.has("execute_id") || jsonNode.get("execute_id").isNull()) {
+                    log.error("Coze响应缺少execute_id: {}", responseBody);
+                    throw new RuntimeException("Coze响应格式错误: 缺少execute_id");
+                }
 
                 CozeExecuteResponse result = new CozeExecuteResponse();
                 result.setExecuteId(jsonNode.get("execute_id").asText());

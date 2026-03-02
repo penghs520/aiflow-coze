@@ -66,8 +66,8 @@ public class TaskService {
         // 创建任务
         Task task = Task.builder()
                 .id(String.valueOf(idGenerator.nextId()))
-                .workflow(workflow)
-                .user(user)
+                .workflowId(workflowId)
+                .userId(userId)
                 .status(0) // 待提交
                 .progress(0)
                 .estimatedPoints(estimatedPoints)
@@ -97,9 +97,13 @@ public class TaskService {
             // 解析参数
             Map<String, Object> parameters = objectMapper.readValue(task.getParameters(), Map.class);
 
+            // 查询工作流获取cozeWorkflowId
+            Workflow workflow = workflowRepository.findById(task.getWorkflowId())
+                    .orElseThrow(() -> new BusinessException("工作流不存在"));
+
             // 调用扣子API
             CozeService.CozeExecuteResponse response = cozeService.executeWorkflow(
-                    task.getWorkflow().getCozeWorkflowId(),
+                    workflow.getCozeWorkflowId(),
                     parameters
             );
 
@@ -110,10 +114,10 @@ public class TaskService {
             taskRepository.save(task);
 
             // 扣除资源点
-            pointService.deductPoints(task.getUser().getId(), task.getEstimatedPoints(), task.getId());
+            pointService.deductPoints(task.getUserId(), task.getEstimatedPoints(), task.getId());
 
             // 增加工作流使用次数
-            workflowService.incrementUsageCount(task.getWorkflow().getId());
+            workflowService.incrementUsageCount(task.getWorkflowId());
 
             log.info("任务 {} 已提交到扣子平台，executeId: {}", task.getId(), response.getExecuteId());
         } catch (Exception e) {
@@ -133,9 +137,9 @@ public class TaskService {
 
         Page<Task> taskPage;
         if (status != null) {
-            taskPage = taskRepository.findByUser_IdAndStatus(userId, status, pageable);
+            taskPage = taskRepository.findByUserIdAndStatus(userId, status, pageable);
         } else {
-            taskPage = taskRepository.findByUser_Id(userId, pageable);
+            taskPage = taskRepository.findByUserId(userId, pageable);
         }
 
         return new PageResponse<>(
@@ -173,7 +177,7 @@ public class TaskService {
 
         // 退还资源点
         if (task.getActualPoints() != null && task.getActualPoints() > 0) {
-            pointService.addPoints(task.getUser().getId(), task.getActualPoints(), 4, task.getId());
+            pointService.addPoints(task.getUserId(), task.getActualPoints(), 4, task.getId());
         }
     }
 
@@ -206,8 +210,15 @@ public class TaskService {
 
         for (Task task : processingTasks) {
             try {
+                // 查询工作流获取cozeWorkflowId
+                Workflow workflow = workflowRepository.findById(task.getWorkflowId())
+                        .orElse(null);
+                if (workflow == null) {
+                    log.error("同步任务状态失败: 工作流不存在, taskId={}", task.getId());
+                    continue;
+                }
                 CozeService.CozeTaskStatus status = cozeService.queryTaskStatus(
-                        task.getWorkflow().getCozeWorkflowId(),
+                        workflow.getCozeWorkflowId(),
                         task.getCozeTaskId()
                 );
 
