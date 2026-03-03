@@ -41,6 +41,7 @@ public class TaskService {
     private final WorkflowService workflowService;
     private final IdGenerator idGenerator;
     private final ObjectMapper objectMapper;
+    private final WebSocketNotificationService notificationService;
 
     /**
      * 创建任务
@@ -225,6 +226,9 @@ public class TaskService {
 
         for (Task task : processingTasks) {
             try {
+                // 保存旧状态用于比较
+                Integer oldStatus = task.getStatus();
+
                 // 查询工作流获取cozeWorkflowId
                 Workflow workflow = workflowRepository.findById(task.getWorkflowId())
                         .orElse(null);
@@ -252,6 +256,15 @@ public class TaskService {
                 }
 
                 taskRepository.save(task);
+
+                // 检测到任务完成（状态从 PROCESSING 变为 COMPLETED 或 FAILED）
+                if (oldStatus == Task.STATUS_PROCESSING &&
+                        (task.getStatus() == Task.STATUS_COMPLETED ||
+                                task.getStatus() == Task.STATUS_FAILED)) {
+                    // 发送 WebSocket 通知
+                    notificationService.sendTaskCompletionNotification(task);
+                }
+
             } catch (Exception e) {
                 log.error("同步任务状态失败: {}", task.getId(), e);
             }

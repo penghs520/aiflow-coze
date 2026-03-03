@@ -279,6 +279,19 @@
     </div>
     
     <div class="container">
+        <!-- 原型说明 -->
+        <div class="card" style="background-color: rgba(51, 102, 204, 0.1); border: 1px solid var(--primary-blue);">
+            <div style="display: flex; align-items: start; gap: var(--spacing-s);">
+                <span class="material-icons" style="color: var(--primary-blue); font-size: 20px;">info</span>
+                <div style="flex: 1;">
+                    <div style="font-weight: bold; margin-bottom: var(--spacing-xs); color: var(--primary-blue);">原型说明</div>
+                    <div style="font-size: 13px; line-height: 1.5; color: var(--text-secondary);">
+                        此页面的参数列表将根据 Coze 平台定义的工作流参数动态渲染。实际应用中，参数类型、名称、是否必填等信息都由 Coze 工作流配置决定，不会硬编码固定参数。
+                    </div>
+                </div>
+            </div>
+        </div>
+
         <!-- 工作流头部信息 -->
         <div class="workflow-header">
             <h1 class="workflow-title">人物视频模仿</h1>
@@ -297,38 +310,10 @@
         <!-- 参数预览 -->
         <div class="card">
             <h2 class="card-title">需要输入的参数</h2>
-            <ul class="param-list">
-                <li class="param-item">
-                    <span class="param-name">人物照片</span>
-                    <span class="param-type">图片上传</span>
-                </li>
-                <li class="param-item">
-                    <span class="param-name">说话文本</span>
-                    <span class="param-type">多行文本</span>
-                </li>
-                <li class="param-item">
-                    <span class="param-name">语言选择</span>
-                    <span class="param-type">下拉选择</span>
-                </li>
-                <li class="param-item">
-                    <span class="param-name">语速调整</span>
-                    <span class="param-type">滑块</span>
-                </li>
-                <li class="param-item">
-                    <span class="param-name">表情强度</span>
-                    <span class="param-type">滑块</span>
-                </li>
-                <li class="param-item">
-                    <span class="param-name">视频清晰度</span>
-                    <span class="param-type">单选按钮</span>
-                </li>
-                <li class="param-item">
-                    <span class="param-name">视频比例</span>
-                    <span class="param-type">单选按钮</span>
-                </li>
-                <li class="param-item">
-                    <span class="param-name">背景音乐</span>
-                    <span class="param-type">开关</span>
+            <ul class="param-list" id="paramList">
+                <!-- 参数列表将根据 Coze 工作流定义动态渲染 -->
+                <li style="text-align: center; padding: var(--spacing-l); color: var(--text-secondary);">
+                    加载中...
                 </li>
             </ul>
         </div>
@@ -402,20 +387,167 @@
     </div>
     
     <script>
-        document.addEventListener('DOMContentLoaded', function() {
-            // 示例视频点击播放
-            const exampleVideo = document.querySelector('.workflow-hero');
-            exampleVideo.addEventListener('click', function() {
-                alert('播放示例视频（模拟）');
-            });
-            
-            // 参数项点击查看详情
+        // ============================================
+        // 参数类型映射
+        // ============================================
+        // 将 Coze 工作流定义的参数类型映射为用户友好的显示文本
+        const paramTypeMap = {
+            'string': '文本输入',
+            'text': '多行文本',
+            'number': '数字输入',
+            'integer': '整数输入',
+            'boolean': '开关',
+            'select': '下拉选择',
+            'radio': '单选按钮',
+            'checkbox': '多选框',
+            'file': '文件上传',
+            'image': '图片上传',
+            'audio': '音频上传',
+            'video': '视频上传',
+            'date': '日期选择',
+            'datetime': '日期时间',
+            'slider': '滑块',
+            'color': '颜色选择',
+            'array': '数组',
+            'object': '对象'
+        };
+
+        // ============================================
+        // 加载工作流详情
+        // ============================================
+        // 实际应用中，应该调用后端 API：
+        // GET /api/workflows/{workflowId}/detail
+        //
+        // 后端会从 Coze 平台获取工作流定义，包括：
+        // - 工作流基本信息（名称、描述、作者等）
+        // - 输入参数定义（从 Coze workflow.input_schema 解析）
+        // - 输出参数定义（从 Coze workflow.output_schema 解析）
+        // - 资源点消耗估算
+        function loadWorkflowDetail() {
+            // 模拟 API 响应数据
+            // 实际数据结构应与后端 API 返回的 JSON 格式一致
+            const workflowDetail = {
+                id: 1,
+                name: '人物视频模仿',
+                description: '使用一张人物照片生成自然说话的视频，支持多种语言、表情和手势。',
+                author: 'AI实验室',
+                updateTime: '2026-02-28',
+                rating: 4.8,
+                usageCount: 2300,
+                cost: 500,
+
+                // ============================================
+                // 重要：参数定义来自 Coze 工作流配置
+                // ============================================
+                // 这些参数不是硬编码的，而是从 Coze 平台的工作流定义中动态获取
+                // Coze 工作流的 input_schema 定义了所有可用的输入参数
+                //
+                // 参数结构说明：
+                // - name: 参数的唯一标识符（对应 Coze 中的字段名）
+                // - displayName: 显示给用户的参数名称
+                // - type: 参数类型（string, number, boolean, select, image 等）
+                // - required: 是否必填
+                // - description: 参数说明
+                // - options: 如果是选择类型，提供可选项列表
+                // - defaultValue: 默认值
+                // - validation: 验证规则（如最小值、最大值、正则表达式等）
+                parameters: [
+                    {
+                        name: 'user_image',
+                        displayName: '人物照片',
+                        type: 'image',
+                        required: true,
+                        description: '上传一张清晰的人物正面照片'
+                    },
+                    {
+                        name: 'speech_text',
+                        displayName: '说话文本',
+                        type: 'text',
+                        required: true,
+                        description: '输入需要人物说的话'
+                    },
+                    {
+                        name: 'language',
+                        displayName: '语言选择',
+                        type: 'select',
+                        required: true,
+                        options: ['中文', '英文', '日文', '韩文'],
+                        defaultValue: '中文'
+                    },
+                    {
+                        name: 'video_quality',
+                        displayName: '视频清晰度',
+                        type: 'radio',
+                        required: false,
+                        options: ['标清', '高清', '超清'],
+                        defaultValue: '高清'
+                    },
+                    {
+                        name: 'aspect_ratio',
+                        displayName: '视频比例',
+                        type: 'radio',
+                        required: false,
+                        options: ['16:9', '9:16', '1:1'],
+                        defaultValue: '16:9'
+                    }
+                ]
+            };
+
+            // 渲染参数列表
+            renderParameters(workflowDetail.parameters);
+        }
+
+        // ============================================
+        // 渲染参数列表
+        // ============================================
+        // 根据从 Coze 获取的参数定义动态生成 HTML
+        function renderParameters(parameters) {
+            const paramList = document.getElementById('paramList');
+
+            // 如果没有参数，显示提示信息
+            if (!parameters || parameters.length === 0) {
+                paramList.innerHTML = '<li style="text-align: center; padding: var(--spacing-l); color: var(--text-secondary);">此工作流无需输入参数</li>';
+                return;
+            }
+
+            // 动态生成参数列表 HTML
+            paramList.innerHTML = parameters.map(param => {
+                // 获取参数类型的显示文本
+                const typeDisplay = paramTypeMap[param.type] || param.type;
+
+                // 如果是必填参数，显示红色星号
+                const requiredBadge = param.required ? '<span style="color: var(--error); margin-left: 4px;">*</span>' : '';
+
+                return `
+                    <li class="param-item" data-param="${param.name}">
+                        <span class="param-name">${param.displayName}${requiredBadge}</span>
+                        <span class="param-type">${typeDisplay}</span>
+                    </li>
+                `;
+            }).join('');
+
+            // 添加参数项点击事件（可选：显示参数详细说明）
             const paramItems = document.querySelectorAll('.param-item');
             paramItems.forEach(item => {
                 item.addEventListener('click', function() {
                     const paramName = this.querySelector('.param-name').textContent;
-                    alert('参数: ' + paramName + '\n类型: ' + this.querySelector('.param-type').textContent);
+                    const paramType = this.querySelector('.param-type').textContent;
+                    alert('参数: ' + paramName + '\n类型: ' + paramType);
                 });
+            });
+        }
+
+        // ============================================
+        // 页面初始化
+        // ============================================
+        document.addEventListener('DOMContentLoaded', function() {
+            // 加载工作流详情（包括动态参数）
+            loadWorkflowDetail();
+
+            // 示例视频点击播放
+            const exampleVideo = document.querySelector('.workflow-hero');
+            exampleVideo.addEventListener('click', function() {
+                alert('播放示例视频（模拟）');
             });
         });
     </script>

@@ -1,25 +1,25 @@
 # AI工作流平台技术方案文档
 
 ## 文档信息
-- **项目名称**：AI工作流平台（Android App + 后台管理系统）
+- **项目名称**：AI工作流平台（React Native移动端 + 后台管理系统）
 - **版本**：v1.0
 - **创建日期**：2026-03-01
 - **创建人**：扣子（Worker Agent）
-- **技术栈**：Android原生 + SpringBoot单体应用
+- **技术栈**：React Native跨平台 + SpringBoot单体应用
 
 ## 1. 技术栈选型
 
-### 1.1 Android客户端
+### 1.1 移动端客户端
 | 技术领域 | 选型方案 | 版本要求 | 选择理由 |
 |---------|---------|---------|---------|
-| **开发语言** | Kotlin为主，Java为辅 | Android 8.0+ | 官方推荐，现代语法，空安全，与Java完全兼容 |
-| **架构模式** | MVVM + Repository | - | 数据驱动UI，LiveData/Flow响应式编程，易于测试 |
-| **UI框架** | Jetpack Compose + Material 3 | Compose 1.7+ | 声明式UI，代码量少，预览即时，适合复杂交互界面 |
-| **网络请求** | Retrofit2 + OkHttp3 | Retrofit 2.9+ | RESTful API标准库，拦截器丰富，支持协程/Flow |
-| **图片加载** | Coil | Coil 2.6+ | Kotlin优先，协程支持，Compose原生集成，性能优秀 |
-| **本地存储** | Room + DataStore | Room 2.6+ | 官方ORM，类型安全，支持Flow监听，DataStore替代SharedPreferences |
-| **依赖注入** | Hilt | Hilt 2.48+ | 基于Dagger，简化配置，Android专有优化 |
-| **调试工具** | LeakCanary, Chucker | 最新版 | 内存泄漏检测，网络请求监控，提升开发效率 |
+| **开发框架** | React Native | 0.84+ | 跨平台开发，一套代码支持iOS/Android，开发效率高 |
+| **开发语言** | JavaScript/TypeScript | ES6+ | 生态丰富，开发效率高，类型安全 |
+| **UI组件库** | React Native Paper | 5.x+ | Material Design 3组件库，深色主题支持，组件丰富 |
+| **导航管理** | React Navigation | 7.x+ | 官方推荐，支持Stack/Tab/Drawer导航，动画流畅 |
+| **状态管理** | Zustand | 5.x+ | 轻量级状态管理，API简洁，无需Provider包裹 |
+| **网络请求** | Axios | 1.6+ | Promise API，拦截器支持，请求/响应处理完善 |
+| **本地存储** | AsyncStorage | - | React Native官方存储方案，简单易用 |
+| **图标库** | React Native Vector Icons | 10.x+ | 丰富的图标集，支持Material Icons等多种图标库 |
 
 ### 1.2 后端服务
 | 技术领域 | 选型方案 | 版本要求 | 选择理由 |
@@ -60,7 +60,7 @@
 | **扣子工作流** | 扣子平台API | HTTP RESTful | 工作流执行，任务提交，状态查询，结果获取 |
 | **支付服务** | 微信支付 + 支付宝 | 官方SDK | 资源点充值，订单支付，支付结果回调 |
 | **短信验证** | 阿里云短信/腾讯云短信 | API调用 | 用户注册登录验证码，安全验证 |
-| **推送服务** | 厂商推送（华为/小米/OPPO/VIVO）+ Firebase | 多通道集成 | 任务完成通知，系统消息，营销推送 |
+| **推送服务** | 厂商推送（华为/小米/OPPO/VIVO）+ Firebase + APNs | 多通道集成 | 任务完成通知，系统消息，营销推送（iOS使用APNs） |
 | **CDN加速** | 阿里云CDN/腾讯云CDN | 对象存储绑定 | 静态资源加速，图片视频快速加载 |
 
 ## 2. 系统架构图
@@ -69,7 +69,7 @@
 
 ### 2.1 架构概述
 系统采用分层架构设计，自顶向下包括：
-1. **客户端层**：Android原生App，提供用户交互界面
+1. **客户端层**：React Native跨平台移动端，支持iOS和Android
 2. **接入层**：API网关统一入口，处理认证、限流、路由
 3. **应用层**：SpringBoot单体应用，模块化设计
 4. **数据层**：MySQL主存储 + Redis缓存 + 对象存储
@@ -77,7 +77,7 @@
 
 ### 2.2 核心组件说明
 
-#### 2.2.1 Android客户端模块
+#### 2.2.1 移动端客户端模块
 - **首页/发现**：工作流列表展示，分类筛选，搜索功能
 - **工作流详情**：预览视频播放，功能描述，参数预览
 - **参数输入**：动态表单生成，实时验证，资源点计算

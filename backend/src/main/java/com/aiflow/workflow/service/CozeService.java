@@ -62,7 +62,7 @@ public class CozeService {
             Map<String, Object> requestBody = new HashMap<>();
             requestBody.put("workflow_id", workflowId);
             requestBody.put("parameters", parameters);
-            requestBody.put("execute_mode", "async");
+            requestBody.put("is_async", true);
 
             String json = objectMapper.writeValueAsString(requestBody);
 

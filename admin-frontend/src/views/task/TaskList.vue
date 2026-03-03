@@ -110,9 +110,10 @@
 </template>
 
 <script setup>
-import { ref, onMounted } from 'vue'
-import { ElMessage, ElMessageBox } from 'element-plus'
+import { ref, onMounted, onUnmounted } from 'vue'
+import { ElMessage, ElMessageBox, ElNotification } from 'element-plus'
 import { getTaskList, cancelTask, batchCancel, getTaskStats, getProcessingTasks, getQueuedTasks } from '@/api/task'
+import websocketService from '@/utils/websocket'
 
 const loading = ref(false)
 const tableData = ref([])
@@ -122,6 +123,70 @@ const total = ref(0)
 const filterStatus = ref('')
 const selectedIds = ref([])
 const stats = ref({})
+
+// WebSocket 订阅引用
+let taskNotificationSubscription = null
+
+/**
+ * 处理任务完成通知
+ */
+const handleTaskNotification = (notification) => {
+  console.log('收到任务通知:', notification)
+
+  // 根据任务状态显示不同的通知
+  if (notification.type === 'TASK_COMPLETED') {
+    ElNotification({
+      title: '任务完成',
+      message: `工作流「${notification.workflowName}」执行完成\n用户：${notification.userNickname}`,
+      type: 'success',
+      duration: 5000,
+      position: 'top-right'
+    })
+  } else if (notification.type === 'TASK_FAILED') {
+    ElNotification({
+      title: '任务失败',
+      message: `工作流「${notification.workflowName}」执行失败\n用户：${notification.userNickname}\n原因：${notification.errorMessage || '未知错误'}`,
+      type: 'error',
+      duration: 8000,
+      position: 'top-right'
+    })
+  }
+
+  // 刷新任务列表和统计数据
+  fetchData()
+  fetchStats()
+}
+
+/**
+ * 初始化 WebSocket 连接
+ */
+const initWebSocket = async () => {
+  try {
+    await websocketService.connect()
+
+    // 订阅任务通知主题
+    taskNotificationSubscription = websocketService.subscribe(
+      '/topic/task-notifications',
+      handleTaskNotification
+    )
+
+    console.log('WebSocket 连接并订阅成功')
+  } catch (error) {
+    console.error('WebSocket 连接失败:', error)
+    // 不显示错误提示，因为用户可能不需要知道 WebSocket 连接失败
+  }
+}
+
+/**
+ * 清理 WebSocket 连接
+ */
+const cleanupWebSocket = () => {
+  if (taskNotificationSubscription) {
+    websocketService.unsubscribe('/topic/task-notifications')
+    taskNotificationSubscription = null
+  }
+  // 注意：不要在这里 disconnect，因为可能有其他页面也在使用
+}
 
 const formatDate = (date) => {
   if (!date) return '-'
@@ -233,6 +298,11 @@ const handleBatchCancel = async () => {
 onMounted(() => {
   fetchData()
   fetchStats()
+  initWebSocket()  // 初始化 WebSocket
+})
+
+onUnmounted(() => {
+  cleanupWebSocket()  // 清理 WebSocket 订阅
 })
 </script>
 
