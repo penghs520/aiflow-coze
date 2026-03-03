@@ -124,15 +124,35 @@ public class CozeService {
                 String responseBody = response.body().string();
                 JsonNode jsonNode = objectMapper.readTree(responseBody);
 
-                CozeTaskStatus status = new CozeTaskStatus();
-                status.setStatus(jsonNode.get("status").asText());
-                status.setProgress(jsonNode.has("progress") ? jsonNode.get("progress").asInt() : 0);
-
-                if (jsonNode.has("result")) {
-                    status.setResult(jsonNode.get("result").toString());
+                // 检查业务错误码
+                if (jsonNode.has("code") && jsonNode.get("code").asInt() != 0) {
+                    String msg = jsonNode.has("msg") ? jsonNode.get("msg").asText() : "未知错误";
+                    log.error("Coze查询任务状态失败: code={}, msg={}", jsonNode.get("code").asInt(), msg);
+                    throw new RuntimeException("Coze API错误: " + msg);
                 }
-                if (jsonNode.has("error_message")) {
-                    status.setErrorMessage(jsonNode.get("error_message").asText());
+
+                // 解析 data 数组中的第一个元素
+                if (!jsonNode.has("data") || !jsonNode.get("data").isArray() || jsonNode.get("data").isEmpty()) {
+                    log.error("Coze响应缺少data数组或数组为空: {}", responseBody);
+                    throw new RuntimeException("Coze响应格式错误: 缺少data数组");
+                }
+
+                JsonNode dataNode = jsonNode.get("data").get(0);
+
+                CozeTaskStatus status = new CozeTaskStatus();
+
+                // 解析 execute_status 字段并转换为统一的状态值
+                String executeStatus = dataNode.has("execute_status") ? dataNode.get("execute_status").asText() : "Unknown";
+                status.setStatus(convertExecuteStatus(executeStatus));
+
+                // 解析 output 字段作为结果
+                if (dataNode.has("output")) {
+                    status.setResult(dataNode.get("output").asText());
+                }
+
+                // 解析错误信息
+                if (dataNode.has("error_message")) {
+                    status.setErrorMessage(dataNode.get("error_message").asText());
                 }
 
                 return status;
@@ -141,6 +161,17 @@ public class CozeService {
             log.error("查询任务状态失败", e);
             throw new RuntimeException("查询任务状态失败: " + e.getMessage());
         }
+    }
+
+    /**
+     * 转换 Coze 的 execute_status 为统一的状态值
+     */
+    private String convertExecuteStatus(String executeStatus) {
+        return switch (executeStatus) {
+            case "Success" -> "completed";
+            case "Fail" -> "failed";
+            default -> "processing";
+        };
     }
 
     /**
@@ -161,7 +192,6 @@ public class CozeService {
         log.info("【模拟模式】查询任务状态: {}", executeId);
         CozeTaskStatus status = new CozeTaskStatus();
         status.setStatus("completed");
-        status.setProgress(100);
         status.setResult("{\"output\": \"模拟结果\"}");
         return status;
     }
@@ -175,7 +205,6 @@ public class CozeService {
     @Data
     public static class CozeTaskStatus {
         private String status;
-        private Integer progress;
         private String result;
         private String errorMessage;
 
