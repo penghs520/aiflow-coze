@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useState, useEffect } from 'react';
 import { View, StyleSheet, ScrollView, RefreshControl, TouchableOpacity } from 'react-native';
 import { Text, Card, Button, Searchbar, IconButton } from 'react-native-paper';
 import LazyImage from '../components/common/LazyImage';
@@ -7,6 +7,7 @@ import { useNavigation } from '@react-navigation/native';
 import { StackNavigationProp } from '@react-navigation/stack';
 import { RootStackParamList } from '../navigation/AppNavigator';
 import { COLORS, WORKFLOW_CATEGORIES } from '../utils/constants';
+import { workflowApi } from '../services/api';
 
 type HomeScreenNavigationProp = StackNavigationProp<RootStackParamList, 'Main'>;
 
@@ -14,10 +15,15 @@ type ViewMode = 'grid' | 'list';
 
 const HomeScreen = () => {
   const navigation = useNavigation<HomeScreenNavigationProp>();
-  const [searchQuery, setSearchQuery] = React.useState('');
-  const [selectedCategory, setSelectedCategory] = React.useState('all');
-  const [refreshing, setRefreshing] = React.useState(false);
-  const [viewMode, setViewMode] = React.useState<ViewMode>('grid');
+  const [searchQuery, setSearchQuery] = useState('');
+  const [selectedCategory, setSelectedCategory] = useState('all');
+  const [refreshing, setRefreshing] = useState(false);
+  const [viewMode, setViewMode] = useState<ViewMode>('grid');
+  const [workflows, setWorkflows] = useState<any[]>([]);
+  const [loading, setLoading] = useState(false);
+  const [page, setPage] = useState(0);
+  const [hasMore, setHasMore] = useState(true);
+  const [error, setError] = useState<string | null>(null);
 
   const formatNumber = (num: number): string => {
     if (num >= 10000) {
@@ -29,99 +35,49 @@ const HomeScreen = () => {
     return num.toString();
   };
 
-  const onRefresh = React.useCallback(() => {
-    setRefreshing(true);
-    // 模拟网络请求
-    setTimeout(() => {
+  const loadWorkflows = async (refresh: boolean = false) => {
+    if (loading) return;
+
+    try {
+      setLoading(true);
+      setError(null);
+      const currentPage = refresh ? 0 : page;
+
+      const response = await workflowApi.getWorkflows({
+        page: currentPage,
+        size: 20,
+        category: selectedCategory === 'all' ? undefined : selectedCategory,
+        keyword: searchQuery || undefined
+      });
+
+      if (refresh) {
+        setWorkflows(response.data);
+        setPage(1);
+      } else {
+        setWorkflows(prev => [...prev, ...response.data]);
+        setPage(currentPage + 1);
+      }
+
+      setHasMore(response.data.length === 20);
+    } catch (err: any) {
+      setError(err.message || '加载失败');
+      console.error('加载工作流失败:', err);
+    } finally {
+      setLoading(false);
       setRefreshing(false);
-    }, 1000);
-  }, []);
-
-  // 模拟工作流数据
-  const workflows = [
-    {
-      id: 'wf_001',
-      name: 'AI视频人物换脸',
-      description: '基于AI技术将视频中的人物面部替换为目标人物',
-      category: 'hot',
-      coverUrl: 'https://picsum.photos/200/300',
-      usageCount: 12580,
-      favoriteCount: 3421,
-    },
-    {
-      id: 'wf_002',
-      name: '自媒体爆款标题生成',
-      description: '一键生成吸睛的自媒体标题',
-      category: 'self_media',
-      coverUrl: 'https://picsum.photos/200/300?random=1',
-      usageCount: 8960,
-      favoriteCount: 2156,
-    },
-    {
-      id: 'wf_003',
-      name: '企业宣传片制作',
-      description: '专业的商业宣传视频制作工具，支持多种模板和风格定制',
-      category: 'business',
-      coverUrl: 'https://picsum.photos/200/300?random=2',
-      usageCount: 5432,
-      favoriteCount: 1890,
-    },
-    {
-      id: 'wf_004',
-      name: '小说推文视频生成',
-      description: '将小说片段转换为吸引人的推文视频',
-      category: 'novel',
-      coverUrl: 'https://picsum.photos/200/300?random=3',
-      usageCount: 15670,
-      favoriteCount: 4523,
-    },
-    {
-      id: 'wf_005',
-      name: '动漫风格转换',
-      description: '真人照片秒变动漫风格，支持多种二次元画风',
-      category: 'anime',
-      coverUrl: 'https://picsum.photos/200/300?random=4',
-      usageCount: 9845,
-      favoriteCount: 2987,
-    },
-    {
-      id: 'wf_006',
-      name: '科幻场景生成',
-      description: '创造未来感十足的科幻场景',
-      category: 'scifi',
-      coverUrl: 'https://picsum.photos/200/300?random=5',
-      usageCount: 6234,
-      favoriteCount: 1765,
-    },
-    {
-      id: 'wf_007',
-      name: 'AI写真修图',
-      description: '专业级人像写真修图工具，一键美颜磨皮',
-      category: 'portrait',
-      coverUrl: 'https://picsum.photos/200/300?random=6',
-      usageCount: 11230,
-      favoriteCount: 3654,
-    },
-    {
-      id: 'wf_008',
-      name: '萌宠视频剪辑',
-      description: '快速制作可爱的宠物视频',
-      category: 'pet',
-      coverUrl: 'https://picsum.photos/200/300?random=7',
-      usageCount: 7890,
-      favoriteCount: 2341,
-    },
-  ];
-
-  const filteredWorkflows = workflows.filter(workflow => {
-    if (selectedCategory !== 'all' && workflow.category !== selectedCategory) {
-      return false;
     }
-    if (searchQuery && !workflow.name.includes(searchQuery)) {
-      return false;
-    }
-    return true;
-  });
+  };
+
+  useEffect(() => {
+    loadWorkflows(true);
+  }, [selectedCategory, searchQuery]);
+
+  const onRefresh = () => {
+    setRefreshing(true);
+    loadWorkflows(true);
+  };
+
+  const filteredWorkflows = workflows; // 已经在 API 层过滤
 
   return (
     <View style={styles.container}>

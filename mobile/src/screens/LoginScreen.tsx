@@ -30,7 +30,10 @@ const LoginScreen = () => {
 
   const handleLogin = () => {
     // 模拟登录
-    navigation.navigate('Main');
+    navigation.reset({
+      index: 0,
+      routes: [{ name: 'Main' }],
+    });
   };
 
   return (

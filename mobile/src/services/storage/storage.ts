@@ -43,7 +43,8 @@ class StorageService {
   // 获取所有键
   async getAllKeys(): Promise<string[]> {
     try {
-      return await AsyncStorage.getAllKeys();
+      const keys = await AsyncStorage.getAllKeys();
+      return [...keys];
     } catch (error) {
       console.error('Storage getAllKeys error:', error);
       return [];
@@ -74,7 +75,7 @@ class StorageService {
   // 批量存储
   async multiSet(data: { [key: string]: any }): Promise<void> {
     try {
-      const pairs = Object.entries(data).map(([key, value]) => [
+      const pairs: [string, string][] = Object.entries(data).map(([key, value]) => [
         key,
         JSON.stringify(value),
       ]);

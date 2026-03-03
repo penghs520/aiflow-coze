@@ -1,5 +1,6 @@
 import api from './api';
 import { Task } from '../../types/task';
+import { adaptTaskFromBackend, taskStatusToBackend } from './adapters';
 
 interface CreateTaskRequest {
   workflowId: string;
@@ -13,7 +14,12 @@ interface CreateTaskRequest {
 class TaskApi {
   // 提交任务
   async createTask(data: CreateTaskRequest): Promise<Task> {
-    return api.post('/tasks', data);
+    const response = await api.post('/tasks', {
+      workflowId: data.workflowId,
+      parameters: data.parameters,
+      settings: data.settings
+    });
+    return adaptTaskFromBackend(response);
   }
 
   // 获取任务列表
@@ -22,22 +28,41 @@ class TaskApi {
     size?: number;
     status?: string;
   }): Promise<{ data: Task[]; total: number }> {
-    return api.get('/tasks', params);
+    const requestParams: any = {
+      page: params?.page || 0,
+      size: params?.size || 20
+    };
+
+    // 状态转换：字符串 -> 数字
+    if (params?.status && params.status !== 'all') {
+      requestParams.status = taskStatusToBackend(params.status);
+    }
+
+    const response: any = await api.get('/tasks', requestParams);
+
+    return {
+      data: (response.content || []).map(adaptTaskFromBackend),
+      total: response.total || 0
+    };
   }
 
   // 获取任务详情
   async getTaskDetail(id: string): Promise<Task> {
-    return api.get(`/tasks/${id}`);
+    const response = await api.get(`/tasks/${id}`);
+    return adaptTaskFromBackend(response);
   }
 
   // 取消任务
   async cancelTask(id: string): Promise<{ success: boolean }> {
-    return api.post(`/tasks/${id}/cancel`);
+    await api.post(`/tasks/${id}/cancel`);
+    return { success: true };
   }
 
   // 重新运行任务
   async retryTask(id: string): Promise<Task> {
-    return api.post(`/tasks/${id}/retry`);
+    await api.post(`/tasks/${id}/retry`);
+    // 重试后重新获取任务详情
+    return this.getTaskDetail(id);
   }
 }
 

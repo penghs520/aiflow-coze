@@ -1,4 +1,7 @@
-export const API_BASE_URL = 'https://api.ai-workflow-platform.com/api/v1';
+// 根据环境变量设置 API 地址
+export const API_BASE_URL = __DEV__
+  ? 'http://localhost:8001/api'  // 开发环境
+  : 'https://api.ai-workflow-platform.com/api';  // 生产环境
 
 export const STORAGE_KEYS = {
   USER_TOKEN: 'user_token',

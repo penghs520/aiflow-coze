@@ -92,7 +92,7 @@ const ParameterInputScreen = () => {
 
   const handleSubmit = () => {
     // 模拟提交任务
-    navigation.navigate('Tasks');
+    navigation.navigate('Main', { screen: 'Tasks' });
   };
 
   if (!workflow) {

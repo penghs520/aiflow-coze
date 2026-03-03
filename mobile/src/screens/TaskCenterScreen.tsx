@@ -128,10 +128,6 @@ const TaskCenterScreen = () => {
           { value: TASK_STATUS.FAILED, label: '失败' },
         ]}
         style={styles.segmentedButtons}
-        textColor={COLORS.text}
-        selectedTextColor={COLORS.text}
-        activeColor={COLORS.primary}
-        inactiveColor={COLORS.surface}
       />
 
       <FlatList

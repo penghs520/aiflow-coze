@@ -35,6 +35,11 @@ class ApiService {
     // 响应拦截器
     this.instance.interceptors.response.use(
       (response: AxiosResponse) => {
+        // 后端返回 Result<T> 格式: {code, message, data, timestamp}
+        // 自动解包 data 字段
+        if (response.data && typeof response.data === 'object' && 'data' in response.data) {
+          return response.data.data;
+        }
         return response.data;
       },
       async (error) => {

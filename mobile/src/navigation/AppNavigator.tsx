@@ -1,5 +1,6 @@
 import React from 'react';
 import { createStackNavigator } from '@react-navigation/stack';
+import { NavigatorScreenParams } from '@react-navigation/native';
 import TabNavigator from './TabNavigator';
 import WorkflowDetailScreen from '../screens/WorkflowDetailScreen';
 import ParameterInputScreen from '../screens/ParameterInputScreen';
@@ -8,8 +9,14 @@ import RechargeScreen from '../screens/RechargeScreen';
 import LoginScreen from '../screens/LoginScreen';
 import { COLORS } from '../utils/constants';
 
+export type TabParamList = {
+  Home: undefined;
+  Tasks: undefined;
+  Profile: undefined;
+};
+
 export type RootStackParamList = {
-  Main: undefined;
+  Main: NavigatorScreenParams<TabParamList>;
   WorkflowDetail: { workflowId: string };
   ParameterInput: { workflowId: string };
   TaskDetail: { taskId: string };
