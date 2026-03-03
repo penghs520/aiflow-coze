@@ -3,6 +3,7 @@ import { View, StyleSheet, ScrollView, Image } from 'react-native';
 import { Text, Card, Button, Divider, ProgressBar } from 'react-native-paper';
 import { useRoute, useNavigation, RouteProp } from '@react-navigation/native';
 import { StackNavigationProp } from '@react-navigation/stack';
+import { VideoView, useVideoPlayer } from 'expo-video';
 import { RootStackParamList } from '../navigation/AppNavigator';
 import { COLORS, TASK_STATUS, TASK_STATUS_LABEL } from '../utils/constants';
 
@@ -14,6 +15,13 @@ const TaskDetailScreen = () => {
   const navigation = useNavigation<TaskDetailScreenNavigationProp>();
   const { taskId } = route.params;
   const [task, setTask] = useState<any>(null);
+  const [videoUrl, setVideoUrl] = useState<string>('');
+
+  const player = useVideoPlayer(videoUrl, player => {
+    if (videoUrl) {
+      player.loop = false;
+    }
+  });
 
   useEffect(() => {
     // 模拟获取任务详情
@@ -132,7 +140,7 @@ const TaskDetailScreen = () => {
           {Object.entries(task.parameters).map(([key, value], index) => (
             <View key={index} style={styles.paramRow}>
               <Text style={styles.paramKey}>{key}</Text>
-              <Text style={styles.paramValue}>{value}</Text>
+              <Text style={styles.paramValue}>{String(value)}</Text>
             </View>
           ))}
         </Card.Content>
@@ -142,13 +150,21 @@ const TaskDetailScreen = () => {
         <Card style={styles.resultCard}>
           <Card.Content>
             <Text style={styles.sectionTitle}>执行结果</Text>
-            {task.result.thumbnailUrl && (
-              <Image source={{ uri: task.result.thumbnailUrl }} style={styles.resultImage} />
-            )}
             {task.result.outputVideoUrl && (
-              <Button mode="contained" style={styles.downloadButton}>
-                下载视频
-              </Button>
+              <>
+                <VideoView
+                  player={player}
+                  style={styles.resultVideo}
+                  nativeControls
+                  contentFit="contain"
+                />
+                <Button mode="contained" style={styles.downloadButton}>
+                  下载视频
+                </Button>
+              </>
+            )}
+            {task.result.thumbnailUrl && !task.result.outputVideoUrl && (
+              <Image source={{ uri: task.result.thumbnailUrl }} style={styles.resultImage} />
             )}
             {task.result.outputImageUrl && (
               <Button mode="contained" style={styles.downloadButton}>
@@ -291,6 +307,12 @@ const styles = StyleSheet.create({
     elevation: 2,
   },
   resultImage: {
+    width: '100%',
+    height: 200,
+    borderRadius: 8,
+    marginBottom: 16,
+  },
+  resultVideo: {
     width: '100%',
     height: 200,
     borderRadius: 8,

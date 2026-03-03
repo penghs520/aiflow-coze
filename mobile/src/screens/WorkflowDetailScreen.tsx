@@ -3,6 +3,7 @@ import { View, StyleSheet, ScrollView, Image, Platform } from 'react-native';
 import { Text, Card, Button, Divider } from 'react-native-paper';
 import { useRoute, useNavigation, RouteProp } from '@react-navigation/native';
 import { StackNavigationProp } from '@react-navigation/stack';
+import { VideoView, useVideoPlayer } from 'expo-video';
 import { RootStackParamList } from '../navigation/AppNavigator';
 import { COLORS } from '../utils/constants';
 
@@ -14,18 +15,26 @@ const WorkflowDetailScreen = () => {
   const navigation = useNavigation<WorkflowDetailScreenNavigationProp>();
   const { workflowId } = route.params;
   const [workflow, setWorkflow] = useState<any>(null);
+  const [videoUrl, setVideoUrl] = useState<string>('');
+
+  const player = useVideoPlayer(videoUrl, player => {
+    if (videoUrl) {
+      player.loop = true;
+      player.play();
+    }
+  });
 
   useEffect(() => {
     // 模拟获取工作流详情
     setTimeout(() => {
-      setWorkflow({
+      const workflowData = {
         id: workflowId,
         name: 'AI视频人物换脸',
         description: '基于AI技术将视频中的人物面部替换为目标人物，支持多种视频格式和分辨率。',
         category: 'video_creation',
         tags: ['换脸', '视频编辑', 'AI特效'],
         coverUrl: 'https://picsum.photos/400/200',
-        previewVideoUrl: 'https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/BigBuckBunny.mp4',
+        previewVideoUrl: 'https://vjs.zencdn.net/v/oceans.mp4',
         basePoints: 1000,
         parameters: [
           {
@@ -62,7 +71,9 @@ const WorkflowDetailScreen = () => {
           averageRating: 4.8,
           favoriteCount: 3421
         }
-      });
+      };
+      setWorkflow(workflowData);
+      setVideoUrl(workflowData.previewVideoUrl);
     }, 500);
   }, [workflowId]);
 
@@ -76,7 +87,16 @@ const WorkflowDetailScreen = () => {
 
   return (
     <ScrollView style={styles.container}>
-      <Image source={{ uri: workflow.coverUrl }} style={styles.coverImage} />
+      {workflow.previewVideoUrl ? (
+        <VideoView
+          player={player}
+          style={styles.previewVideo}
+          nativeControls
+          contentFit="contain"
+        />
+      ) : (
+        <Image source={{ uri: workflow.coverUrl }} style={styles.coverImage} />
+      )}
 
       <Card style={styles.infoCard}>
         <Card.Content>

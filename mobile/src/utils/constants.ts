@@ -8,10 +8,14 @@ export const STORAGE_KEYS = {
 };
 
 export const WORKFLOW_CATEGORIES = [
-  { id: 'video_creation', name: '视频创作', icon: '🎬' },
-  { id: 'image_creation', name: '图文创作', icon: '🖼️' },
-  { id: 'text_creation', name: '文本创作', icon: '📝' },
-  { id: 'audio_creation', name: '音频创作', icon: '🎵' },
+  { id: 'hot', name: '热门', icon: '🔥' },
+  { id: 'self_media', name: '自媒体', icon: '📱' },
+  { id: 'business', name: '商业宣传', icon: '💼' },
+  { id: 'novel', name: '小说推文', icon: '📖' },
+  { id: 'anime', name: '动漫', icon: '🎨' },
+  { id: 'scifi', name: '科幻', icon: '🚀' },
+  { id: 'portrait', name: '写真', icon: '📸' },
+  { id: 'pet', name: '萌宠', icon: '🐾' },
 ];
 
 export const TASK_STATUS = {
