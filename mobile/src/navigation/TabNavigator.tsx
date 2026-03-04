@@ -65,7 +65,7 @@ const TabNavigator = () => {
       <Tab.Screen
         name="Tasks"
         component={TaskCenterScreen}
-        options={{ title: '任务中心' }}
+        options={{ title: '任务中心', headerShown: false }}
         listeners={{
           tabPress: async (e) => {
             e.preventDefault();

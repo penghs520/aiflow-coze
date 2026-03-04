@@ -1,6 +1,7 @@
 import React from 'react';
-import { View, StyleSheet, FlatList, RefreshControl } from 'react-native';
-import { Text, Card, Button, SegmentedButtons } from 'react-native-paper';
+import { View, StyleSheet, FlatList, RefreshControl, TouchableOpacity, ScrollView } from 'react-native';
+import { Text, Card, Button } from 'react-native-paper';
+import { SafeAreaView } from 'react-native-safe-area-context';
 import { useNavigation } from '@react-navigation/native';
 import { StackNavigationProp } from '@react-navigation/stack';
 import { RootStackParamList } from '../navigation/AppNavigator';
@@ -117,18 +118,47 @@ const TaskCenterScreen = () => {
   );
 
   return (
-    <View style={styles.container}>
-      <SegmentedButtons
-        value={selectedStatus}
-        onValueChange={setSelectedStatus}
-        buttons={[
-          { value: 'all', label: '全部' },
-          { value: TASK_STATUS.PROCESSING, label: '处理中' },
-          { value: TASK_STATUS.COMPLETED, label: '已完成' },
-          { value: TASK_STATUS.FAILED, label: '失败' },
-        ]}
-        style={styles.segmentedButtons}
-      />
+    <SafeAreaView style={styles.container} edges={['top']}>
+      <View style={styles.header}>
+        <ScrollView
+          horizontal
+          showsHorizontalScrollIndicator={false}
+          contentContainerStyle={styles.tabContent}
+        >
+          <TouchableOpacity
+            style={[styles.tabItem, selectedStatus === 'all' && styles.tabItemActive]}
+            onPress={() => setSelectedStatus('all')}
+          >
+            <Text style={[styles.tabText, selectedStatus === 'all' && styles.tabTextActive]}>
+              全部
+            </Text>
+          </TouchableOpacity>
+          <TouchableOpacity
+            style={[styles.tabItem, selectedStatus === TASK_STATUS.PROCESSING && styles.tabItemActive]}
+            onPress={() => setSelectedStatus(TASK_STATUS.PROCESSING)}
+          >
+            <Text style={[styles.tabText, selectedStatus === TASK_STATUS.PROCESSING && styles.tabTextActive]}>
+              处理中
+            </Text>
+          </TouchableOpacity>
+          <TouchableOpacity
+            style={[styles.tabItem, selectedStatus === TASK_STATUS.COMPLETED && styles.tabItemActive]}
+            onPress={() => setSelectedStatus(TASK_STATUS.COMPLETED)}
+          >
+            <Text style={[styles.tabText, selectedStatus === TASK_STATUS.COMPLETED && styles.tabTextActive]}>
+              已完成
+            </Text>
+          </TouchableOpacity>
+          <TouchableOpacity
+            style={[styles.tabItem, selectedStatus === TASK_STATUS.FAILED && styles.tabItemActive]}
+            onPress={() => setSelectedStatus(TASK_STATUS.FAILED)}
+          >
+            <Text style={[styles.tabText, selectedStatus === TASK_STATUS.FAILED && styles.tabTextActive]}>
+              失败
+            </Text>
+          </TouchableOpacity>
+        </ScrollView>
+      </View>
 
       <FlatList
         data={filteredTasks}
@@ -144,23 +174,49 @@ const TaskCenterScreen = () => {
           </View>
         }
       />
-    </View>
+    </SafeAreaView>
   );
 };
 
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: COLORS.background,
+    backgroundColor: '#0F0F10',
   },
-  segmentedButtons: {
-    margin: 16,
-    backgroundColor: COLORS.surface,
-    borderRadius: 8,
-    elevation: 2,
+  header: {
+    backgroundColor: '#0F0F10',
+    paddingTop: 8,
+    paddingBottom: 12,
+  },
+  tabContent: {
+    paddingHorizontal: 16,
+    alignItems: 'center',
+    gap: 4,
+  },
+  tabItem: {
+    paddingHorizontal: 12,
+    paddingVertical: 8,
+    marginRight: 4,
+    backgroundColor: 'transparent',
+    height: 36,
+    justifyContent: 'center',
+  },
+  tabItemActive: {
+    backgroundColor: 'transparent',
+  },
+  tabText: {
+    fontSize: 14,
+    color: COLORS.textSecondary,
+    fontWeight: '500',
+  },
+  tabTextActive: {
+    fontSize: 16,
+    color: '#FFFFFF',
+    fontWeight: '700',
   },
   listContent: {
     padding: 16,
+    paddingTop: 8,
     paddingBottom: 20,
   },
   taskCard: {
