@@ -33,10 +33,15 @@ const ProfileScreen = () => {
       await AsyncStorage.removeItem(STORAGE_KEYS.REFRESH_TOKEN);
       console.log('REFRESH_TOKEN 已清除');
 
-      console.log('准备导航到登录页面...');
-      // 直接导航到登录页面
-      navigation.navigate('Login');
-      console.log('导航命令已发送');
+      console.log('准备重置导航栈并跳转到登录页面...');
+      // 重置导航栈，清除所有历史记录
+      navigation.dispatch(
+        CommonActions.reset({
+          index: 0,
+          routes: [{ name: 'Login' }],
+        })
+      );
+      console.log('导航栈已重置');
     } catch (error) {
       console.error('退出登录失败:', error);
       Alert.alert('错误', '退出登录失败，请稍后重试');

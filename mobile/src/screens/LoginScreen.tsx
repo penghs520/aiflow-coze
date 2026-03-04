@@ -7,6 +7,7 @@ import {
   ScrollView,
   Alert,
   Keyboard,
+  TouchableOpacity,
 } from 'react-native';
 import { Text, TextInput, Button, Card } from 'react-native-paper';
 import { useNavigation } from '@react-navigation/native';
@@ -45,8 +46,6 @@ const LoginScreen = () => {
     try {
       setSendingCode(true);
       await userApi.sendSmsCode({ phone });
-
-      Alert.alert('成功', '验证码已发送');
 
       setCountdown(60);
       const timer = setInterval(() => {
@@ -102,14 +101,8 @@ const LoginScreen = () => {
         keyboardShouldPersistTaps="handled"
       >
           <View style={styles.logoContainer}>
-            <View style={styles.logoWrapper}>
-              <Image
-                source={{ uri: 'https://picsum.photos/200/200' }}
-                style={styles.logo}
-              />
-            </View>
-            <Text style={styles.appName}>AI工作流平台</Text>
-            <Text style={styles.appSubtitle}>登录/注册</Text>
+            <Text style={styles.appName}>即刻创作</Text>
+            <Text style={styles.appSubtitle}>AI视频制作，一键生成</Text>
           </View>
 
           <Card style={styles.loginCard}>
@@ -202,40 +195,22 @@ const styles = StyleSheet.create({
   },
   logoContainer: {
     alignItems: 'center',
-    marginBottom: 32,
-  },
-  logoWrapper: {
-    width: 100,
-    height: 100,
-    borderRadius: 50,
-    backgroundColor: COLORS.surface,
-    justifyContent: 'center',
-    alignItems: 'center',
-    marginBottom: 16,
-    elevation: 4,
-    shadowColor: '#000',
-    shadowOffset: { width: 0, height: 2 },
-    shadowOpacity: 0.3,
-    shadowRadius: 4,
-  },
-  logo: {
-    width: 80,
-    height: 80,
-    borderRadius: 40,
+    marginBottom: 48,
   },
   appName: {
-    fontSize: 28,
+    fontSize: 32,
     fontWeight: 'bold',
     color: COLORS.text,
     marginBottom: 8,
   },
   appSubtitle: {
-    fontSize: 16,
+    fontSize: 14,
     color: COLORS.textSecondary,
+    letterSpacing: 0.5,
   },
   loginCard: {
     backgroundColor: COLORS.surface,
-    borderRadius: 16,
+    borderRadius: 20,
     elevation: 4,
     shadowColor: '#000',
     shadowOffset: { width: 0, height: 2 },
@@ -243,16 +218,16 @@ const styles = StyleSheet.create({
     shadowRadius: 4,
   },
   cardContent: {
-    padding: 24,
+    padding: 28,
   },
   inputContainer: {
-    marginBottom: 20,
+    marginBottom: 24,
   },
   inputLabel: {
     fontSize: 14,
     fontWeight: '600',
     color: COLORS.text,
-    marginBottom: 8,
+    marginBottom: 10,
   },
   input: {
     backgroundColor: COLORS.background,
@@ -261,42 +236,46 @@ const styles = StyleSheet.create({
   codeContainer: {
     flexDirection: 'row',
     alignItems: 'flex-start',
+    gap: 10,
   },
   codeInput: {
     flex: 1,
     backgroundColor: COLORS.background,
     fontSize: 16,
-    marginRight: 12,
   },
   codeButton: {
     height: 56,
     justifyContent: 'center',
     borderColor: COLORS.primary,
-    borderRadius: 8,
+    borderRadius: 10,
+    minWidth: 110,
   },
   codeButtonLabel: {
-    fontSize: 14,
-    marginHorizontal: 4,
+    fontSize: 13,
+    fontWeight: '500',
   },
   loginButton: {
-    height: 50,
+    height: 52,
     justifyContent: 'center',
-    borderRadius: 8,
-    marginTop: 8,
-    marginBottom: 16,
+    borderRadius: 12,
+    marginTop: 12,
+    marginBottom: 20,
+    elevation: 2,
   },
   loginButtonLabel: {
-    fontSize: 16,
+    fontSize: 17,
     fontWeight: 'bold',
+    letterSpacing: 0.5,
   },
   termsText: {
     fontSize: 12,
     color: COLORS.textSecondary,
     textAlign: 'center',
-    lineHeight: 18,
+    lineHeight: 20,
   },
   termsLink: {
     color: COLORS.primary,
+    fontWeight: '500',
   },
 });
 
