@@ -3,12 +3,12 @@ import { User, LoginRequest, SmsCodeRequest, LoginResponse, PointRecord } from '
 
 class UserApi {
   // 发送验证码
-  async sendSmsCode(data: SmsCodeRequest): Promise<{ success: boolean }> {
-    return api.post('/auth/sms-code', data);
+  async sendSmsCode(data: { phone: string }): Promise<void> {
+    return api.post('/auth/send-code', data);
   }
 
   // 登录/注册
-  async login(data: LoginRequest): Promise<LoginResponse> {
+  async login(data: { phone: string; code: string }): Promise<{ token: string; tokenType: string }> {
     return api.post('/auth/login', data);
   }
 

@@ -1,11 +1,12 @@
 import React, { useEffect, useState } from 'react';
-import { View, StyleSheet, ScrollView, Image, Platform } from 'react-native';
+import { View, StyleSheet, ScrollView, Image, Platform, Alert } from 'react-native';
 import { Text, Card, Button, Divider } from 'react-native-paper';
 import { useRoute, useNavigation, RouteProp } from '@react-navigation/native';
 import { StackNavigationProp } from '@react-navigation/stack';
 import { VideoView, useVideoPlayer } from 'expo-video';
 import { RootStackParamList } from '../navigation/AppNavigator';
 import { COLORS } from '../utils/constants';
+import { useAuth } from '../hooks/useAuth';
 
 type WorkflowDetailScreenRouteProp = RouteProp<RootStackParamList, 'WorkflowDetail'>;
 type WorkflowDetailScreenNavigationProp = StackNavigationProp<RootStackParamList, 'WorkflowDetail'>;
@@ -16,6 +17,7 @@ const WorkflowDetailScreen = () => {
   const { workflowId } = route.params;
   const [workflow, setWorkflow] = useState<any>(null);
   const [videoUrl, setVideoUrl] = useState<string>('');
+  const { requireLogin } = useAuth();
 
   const player = useVideoPlayer(videoUrl, player => {
     if (videoUrl) {
@@ -76,6 +78,13 @@ const WorkflowDetailScreen = () => {
       setVideoUrl(workflowData.previewVideoUrl);
     }, 500);
   }, [workflowId]);
+
+  const handleUseWorkflow = async () => {
+    const isLoggedIn = await requireLogin();
+    if (isLoggedIn) {
+      navigation.navigate('ParameterInput', { workflowId: workflow.id });
+    }
+  };
 
   if (!workflow) {
     return (
@@ -148,7 +157,7 @@ const WorkflowDetailScreen = () => {
 
       <View style={styles.actionContainer}>
         <Text style={styles.pointsText}>消耗: {workflow.basePoints} 资源点</Text>
-        <Button mode="contained" style={styles.useButton} onPress={() => navigation.navigate('ParameterInput', { workflowId: workflow.id })}>
+        <Button mode="contained" style={styles.useButton} onPress={handleUseWorkflow}>
           立即使用
         </Button>
       </View>

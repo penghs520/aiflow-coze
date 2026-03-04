@@ -1,7 +1,17 @@
-// 根据环境变量设置 API 地址
-export const API_BASE_URL = __DEV__
-  ? 'http://localhost:8001/api'  // 开发环境
-  : 'https://api.ai-workflow-platform.com/api';  // 生产环境
+import { Platform } from 'react-native';
+
+// 根据平台和环境变量设置 API 地址
+const getApiBaseUrl = () => {
+  if (!__DEV__) {
+    return 'https://api.ai-workflow-platform.com/api';  // 生产环境
+  }
+
+  // 开发环境 - 使用局域网 IP 以支持 Expo Go 真机调试
+  // 如果使用模拟器，请改为 10.0.2.2 (Android) 或 localhost (iOS)
+  return 'http://192.168.2.4:8001/api';
+};
+
+export const API_BASE_URL = getApiBaseUrl();
 
 export const STORAGE_KEYS = {
   USER_TOKEN: 'user_token',

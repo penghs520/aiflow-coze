@@ -34,11 +34,20 @@ pnpm start
 
 
                                                                                                                                                                    
-### 方式三：使用 Expo Go                                                                                                                                              
-1. 在手机上安装 Expo Go 应用                                                                                                                                        
-2. 启动开发服务器：                                                                                                                                                 
-```bash                                                                                                                                                        
-cd mobile                                                                                                                                                      
-pnpm start                                                                                                                                                     
-```                                                                                                                                                            
-3. 用 Expo Go 扫描终端中的二维码即可运行   
+### 方式三：使用 Expo Go
+1. 在手机上安装 Expo Go 应用
+2. 确保手机和电脑在同一个 WiFi 网络（192.168.2.x 网段）
+3. 启动开发服务器：
+```bash
+cd mobile
+pnpm start
+```
+4. 用 Expo Go 扫描终端中的二维码即可运行
+
+**重要配置说明：**
+- Expo Go 真机调试需要使用局域网 IP 地址访问后端 API
+- 当前配置：`mobile/src/utils/constants.ts` 中 API 地址设为 `http://192.168.2.4:8001/api`
+- 如果切换到模拟器，需要修改为：
+  - Android 模拟器：`http://10.0.2.2:8001/api`
+  - iOS 模拟器：`http://localhost:8001/api`
+- 修改配置后需要重启 Expo 开发服务器并在 Expo Go 中重新加载应用   
