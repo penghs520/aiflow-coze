@@ -7,7 +7,7 @@ import ParameterInputScreen from '../screens/ParameterInputScreen';
 import TaskDetailScreen from '../screens/TaskDetailScreen';
 import RechargeScreen from '../screens/RechargeScreen';
 import LoginScreen from '../screens/LoginScreen';
-import { COLORS } from '../utils/constants';
+import { COLORS, STORAGE_KEYS } from '../utils/constants';
 
 export type TabParamList = {
   Home: undefined;
@@ -29,6 +29,7 @@ const Stack = createStackNavigator<RootStackParamList>();
 const AppNavigator = () => {
   return (
     <Stack.Navigator
+      initialRouteName="Main"
       screenOptions={{
         headerStyle: {
           backgroundColor: COLORS.surface,
@@ -44,12 +45,12 @@ const AppNavigator = () => {
         headerBackTitle: '返回',
       }}
     >
+      <Stack.Screen name="Login" component={LoginScreen} options={{ title: '登录', headerShown: false }} />
       <Stack.Screen name="Main" component={TabNavigator} options={{ headerShown: false }} />
       <Stack.Screen name="WorkflowDetail" component={WorkflowDetailScreen} options={{ title: '工作流详情' }} />
       <Stack.Screen name="ParameterInput" component={ParameterInputScreen} options={{ title: '参数输入' }} />
       <Stack.Screen name="TaskDetail" component={TaskDetailScreen} options={{ title: '任务详情' }} />
       <Stack.Screen name="Recharge" component={RechargeScreen} options={{ title: '充值' }} />
-      <Stack.Screen name="Login" component={LoginScreen} options={{ title: '登录', headerShown: false }} />
     </Stack.Navigator>
   );
 };
