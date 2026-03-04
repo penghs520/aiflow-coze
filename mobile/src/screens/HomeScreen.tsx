@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { View, StyleSheet, ScrollView, RefreshControl, TouchableOpacity } from 'react-native';
 import { Text, Card, Button, Searchbar, IconButton } from 'react-native-paper';
+import { SafeAreaView } from 'react-native-safe-area-context';
 import LazyImage from '../components/common/LazyImage';
 import MasonryList from '../components/common/MasonryList';
 import { useNavigation } from '@react-navigation/native';
@@ -80,33 +81,35 @@ const HomeScreen = () => {
   const filteredWorkflows = workflows; // 已经在 API 层过滤
 
   return (
-    <View style={styles.container}>
-      <View style={styles.tabContainer}>
-        <ScrollView 
-          horizontal 
-          showsHorizontalScrollIndicator={false}
-          contentContainerStyle={styles.tabContent}
-        >
-        <TouchableOpacity 
-          style={[styles.tabItem, selectedCategory === 'all' && styles.tabItemActive]}
-          onPress={() => setSelectedCategory('all')}
-        >
-          <Text style={[styles.tabText, selectedCategory === 'all' && styles.tabTextActive]}>
-            全部
-          </Text>
-        </TouchableOpacity>
-        {WORKFLOW_CATEGORIES.map(category => (
-          <TouchableOpacity 
-            key={category.id}
-            style={[styles.tabItem, selectedCategory === category.id && styles.tabItemActive]}
-            onPress={() => setSelectedCategory(category.id)}
+    <SafeAreaView style={styles.container} edges={['top']}>
+      <View style={styles.header}>
+        <View style={styles.tabContainer}>
+          <ScrollView
+            horizontal
+            showsHorizontalScrollIndicator={false}
+            contentContainerStyle={styles.tabContent}
           >
-            <Text style={[styles.tabText, selectedCategory === category.id && styles.tabTextActive]}>
-              {category.name}
+          <TouchableOpacity
+            style={[styles.tabItem, selectedCategory === 'all' && styles.tabItemActive]}
+            onPress={() => setSelectedCategory('all')}
+          >
+            <Text style={[styles.tabText, selectedCategory === 'all' && styles.tabTextActive]}>
+              全部
             </Text>
           </TouchableOpacity>
-        ))}
-        </ScrollView>
+          {WORKFLOW_CATEGORIES.map(category => (
+            <TouchableOpacity
+              key={category.id}
+              style={[styles.tabItem, selectedCategory === category.id && styles.tabItemActive]}
+              onPress={() => setSelectedCategory(category.id)}
+            >
+              <Text style={[styles.tabText, selectedCategory === category.id && styles.tabTextActive]}>
+                {category.name}
+              </Text>
+            </TouchableOpacity>
+          ))}
+          </ScrollView>
+        </View>
       </View>
 
       <ScrollView
@@ -172,47 +175,51 @@ const HomeScreen = () => {
           </View>
         )}
       </ScrollView>
-    </View>
+    </SafeAreaView>
   );
 };
 
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: COLORS.background,
+    backgroundColor: '#0F0F10',
+  },
+  header: {
+    backgroundColor: '#0F0F10',
+    paddingBottom: 12,
   },
   tabContainer: {
-    height: 36,
-    paddingTop: 4,
-    marginBottom: 8,
+    paddingTop: 8,
   },
   tabContent: {
     paddingHorizontal: 16,
     alignItems: 'center',
-    paddingBottom: 4,
+    gap: 4,
   },
   tabItem: {
-    paddingHorizontal: 14,
-    paddingVertical: 4,
-    marginRight: 6,
-    borderRadius: 14,
-    backgroundColor: COLORS.surface,
-    height: 28,
+    paddingHorizontal: 12,
+    paddingVertical: 8,
+    marginRight: 4,
+    backgroundColor: 'transparent',
+    height: 36,
     justifyContent: 'center',
   },
   tabItemActive: {
-    backgroundColor: COLORS.primary,
+    backgroundColor: 'transparent',
   },
   tabText: {
-    fontSize: 13,
+    fontSize: 14,
     color: COLORS.textSecondary,
+    fontWeight: '500',
   },
   tabTextActive: {
-    color: COLORS.text,
-    fontWeight: '600',
+    fontSize: 16,
+    color: '#FFFFFF',
+    fontWeight: '700',
   },
   scrollView: {
     flex: 1,
+    backgroundColor: '#0F0F10',
   },
   workflowCard: {
     width: '100%',
