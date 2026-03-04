@@ -44,10 +44,6 @@ public class Task {
     @Column(name = "status", nullable = false)
     private Integer status;
 
-    @Column(name = "progress", nullable = false)
-    @Builder.Default
-    private Integer progress = 0;
-
     /**
      * 任务参数，存储为JSON
      */
@@ -128,26 +124,8 @@ public class Task {
     public boolean canBeRetried() {
         return status == STATUS_FAILED;
     }
-
-    public void startProcessing() {
-        if (status != STATUS_QUEUED) {
-            throw new IllegalStateException("只有排队中的任务可以开始处理");
-        }
-        status = STATUS_PROCESSING;
-        startedAt = LocalDateTime.now();
-        progress = 10; // 初始进度
-    }
-
-    public void updateProgress(Integer newProgress) {
-        if (newProgress < 0 || newProgress > 100) {
-            throw new IllegalArgumentException("进度必须在0-100之间");
-        }
-        progress = newProgress;
-    }
-
     public void complete(String resultJson) {
         status = STATUS_COMPLETED;
-        progress = 100;
         result = resultJson;
         completedAt = LocalDateTime.now();
     }

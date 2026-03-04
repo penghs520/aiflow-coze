@@ -247,7 +247,6 @@ GET /api/v1/workflows?page=1&size=20&category=video&sort=popularity
     "workflowName": "AI视频人物换脸",
     "userId": "user_001",
     "status": "completed",
-    "progress": 100,
     "estimatedPoints": 1500,
     "actualPoints": 1450,
     "parameters": {
@@ -373,7 +372,6 @@ GET /api/v1/workflows?page=1&size=20&category=video&sort=popularity
 | workflow_id | VARCHAR(32) | NOT NULL | 工作流ID |
 | user_id | BIGINT | NOT NULL | 用户ID |
 | status | TINYINT | NOT NULL | 状态：0-待提交，1-排队中，2-处理中，3-已完成，4-失败，5-已取消 |
-| progress | TINYINT | DEFAULT 0 | 进度百分比 |
 | parameters | JSON | NOT NULL | 任务参数JSON |
 | estimated_points | INT | | 预估消耗点数 |
 | actual_points | INT | | 实际消耗点数 |
@@ -436,7 +434,6 @@ GET /api/v1/workflows?page=1&size=20&category=video&sort=popularity
 | `workflow:list:{category}:{page}` | String | 5分钟 | 工作流列表缓存 |
 | `sms:code:{phone}` | String | 5分钟 | 短信验证码 |
 | `rate:limit:{api}:{ip}` | String | 1分钟 | 接口限流计数 |
-| `task:{taskId}:progress` | String | 10分钟 | 任务进度实时更新 |
 
 ### 4.4 数据库优化策略
 1. **读写分离**：主库写，从库读（初期可用，后续根据负载扩展）

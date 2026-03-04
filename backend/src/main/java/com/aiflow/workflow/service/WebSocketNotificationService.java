@@ -47,7 +47,6 @@ public class WebSocketNotificationService {
                     .workflowName(workflow != null ? workflow.getName() : "未知工作流")
                     .userNickname(user != null ? user.getNickname() : "未知用户")
                     .status(task.getStatus())
-                    .progress(task.getProgress())
                     .result(task.getResult())
                     .errorMessage(task.getErrorMessage())
                     .completedAt(task.getCompletedAt())

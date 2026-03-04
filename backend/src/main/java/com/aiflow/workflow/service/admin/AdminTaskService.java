@@ -180,7 +180,6 @@ public class AdminTaskService {
                 .workflowId(workflowId)
                 .userId(adminUser.getId())
                 .status(Task.STATUS_PENDING_SUBMISSION)
-                .progress(0)
                 .estimatedPoints(0) // 内测任务不消耗资源点
                 .build();
 

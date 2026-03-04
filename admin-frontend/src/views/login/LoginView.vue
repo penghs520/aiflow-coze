@@ -4,20 +4,18 @@
       <h2>AI工作流平台 - 管理后台</h2>
       <el-form :model="form" :rules="rules" ref="formRef" @submit.prevent="handleLogin">
         <el-form-item prop="username">
-          <el-input
+          <input
             v-model="form.username"
             placeholder="用户名"
-            prefix-icon="User"
-            size="large"
+            class="test-input"
           />
         </el-form-item>
         <el-form-item prop="password">
-          <el-input
+          <input
             v-model="form.password"
             type="password"
             placeholder="密码"
-            prefix-icon="Lock"
-            size="large"
+            class="test-input"
             @keyup.enter="handleLogin"
           />
         </el-form-item>
@@ -95,5 +93,28 @@ h2 {
   text-align: center;
   margin-bottom: 30px;
   color: #333;
+}
+
+:deep(.el-input__wrapper) {
+  width: 100%;
+  position: relative;
+  z-index: 1;
+}
+
+:deep(.el-input__inner) {
+  z-index: 2;
+}
+
+.test-input {
+  width: 100%;
+  padding: 8px 12px;
+  font-size: 14px;
+  border: 1px solid #dcdfe6;
+  border-radius: 4px;
+  outline: none;
+}
+
+.test-input:focus {
+  border-color: #409eff;
 }
 </style>

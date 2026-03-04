@@ -43,6 +43,25 @@ public class User {
     private Long pointsBalance = 30000L;
 
     /**
+     * 用户类型：0-普通用户，1-VIP用户，2-终生会员
+     */
+    @Column(name = "user_type", nullable = false)
+    @Builder.Default
+    private Integer userType = 0;
+
+    /**
+     * 会员开通时间
+     */
+    @Column(name = "vip_start_at")
+    private LocalDateTime vipStartAt;
+
+    /**
+     * 会员到期时间
+     */
+    @Column(name = "vip_expire_at")
+    private LocalDateTime vipExpireAt;
+
+    /**
      * 状态：0-禁用，1-正常，2-锁定
      */
     @Column(name = "status", nullable = false)
@@ -67,6 +86,18 @@ public class User {
 
     public boolean isLocked() {
         return status == 2;
+    }
+
+    public boolean isVip() {
+        return userType == 1 && vipExpireAt != null && vipExpireAt.isAfter(LocalDateTime.now());
+    }
+
+    public boolean isLifetimeMember() {
+        return userType == 2;
+    }
+
+    public boolean hasValidMembership() {
+        return isLifetimeMember() || isVip();
     }
 
     public boolean hasSufficientPoints(Long required) {

@@ -85,7 +85,6 @@ public class TaskService {
                 .workflowId(workflowId)
                 .userId(userId)
                 .status(0) // 待提交
-                .progress(0)
                 .estimatedPoints(estimatedPoints)
                 .build();
 
@@ -209,7 +208,6 @@ public class TaskService {
         }
 
         task.setStatus(0); // 待提交
-        task.setProgress(0);
         task.setErrorMessage(null);
         taskRepository.save(task);
 
@@ -243,7 +241,6 @@ public class TaskService {
 
                 if (status.isCompleted()) {
                     task.setStatus(3); // 已完成
-                    task.setProgress(100);
                     task.setResult(status.getResult());
                     task.setCompletedAt(LocalDateTime.now());
                     task.setActualPoints(task.getEstimatedPoints());
@@ -252,7 +249,7 @@ public class TaskService {
                     task.setErrorMessage(status.getErrorMessage());
                     task.setCompletedAt(LocalDateTime.now());
                 } else {
-                    task.setProgress(status.getProgress());
+                    task.setStatus(2);
                 }
 
                 taskRepository.save(task);

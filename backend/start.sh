@@ -42,4 +42,4 @@ echo "━━━━━━━━━━━━━━━━━━━━━━━━�
 echo ""
 
 # 启动应用
-mvn spring-boot:run
+mvn spring-boot:run -Dspring.config.location=classpath:application.yml
